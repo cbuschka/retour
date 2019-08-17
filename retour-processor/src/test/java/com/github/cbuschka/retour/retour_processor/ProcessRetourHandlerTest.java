@@ -27,6 +27,8 @@ public class ProcessRetourHandlerTest {
 	@Mock
 	private Context context;
 	@Mock
+	private ChargeSellerService chargeSellerService;
+	@Mock
 	private LambdaLogger logger;
 	@Mock
 	private Map<String, Object> event;
@@ -41,14 +43,15 @@ public class ProcessRetourHandlerTest {
 	}
 
 	@Test
-	public void logsEvent() {
+	public void chargesSeller() {
 		givenIsAnEvent();
 
 		whenHandlerInvoked();
 
-		thenHandlerLoggedTheEvent();
+		thenSellerIsCharged();
 		thenHandlerReturnedNoValue();
 	}
+
 
 	@Test
 	public void doesNotReturnAnything() {
@@ -65,8 +68,8 @@ public class ProcessRetourHandlerTest {
 		this.response = this.processRetourHandler.handleRequest(event, context);
 	}
 
-	private void thenHandlerLoggedTheEvent() {
-		verify(logger).log(EVENT_TO_STRING_FORM);
+	private void thenSellerIsCharged() {
+		verify(chargeSellerService).chargeSeller();
 	}
 
 	private void thenHandlerReturnedNoValue() {
