@@ -26,14 +26,25 @@ resource "aws_iam_policy" "lambda_policy" {
     "Version": "2012-10-17",
     "Statement": [
       {
-        "Sid": "LambdaPolicy",
+        "Sid": "AllowRetourProcessorToLog",
         "Effect": "Allow",
         "Action": [
           "cloudwatch:PutMetricData",
-          "logs:CreateLogStream",
-          "logs:PutLogEvents"
+          "logs:CreateLogStream", "logs:PutLogEvents"
         ],
         "Resource": "*"
+      },
+      {
+        "Sid": "AllowResourceProcessorToAccessMessagesToChargeSeller",
+        "Effect": "Allow",
+        "Action": [ "sqs:GetQueueUrl", "sqs:SendMessage" ],
+        "Resource": "${aws_sqs_queue.charge_seller_fifo_queue.arn}"
+      },
+      {
+        "Sid": "AllowResourceProcessorToAccessMessagesToRefundBuyer",
+        "Effect": "Allow",
+        "Action": [ "sqs:GetQueueUrl", "sqs:SendMessage" ],
+        "Resource": "${aws_sqs_queue.refund_buyer_fifo_queue.arn}"
       }
     ]
   }
