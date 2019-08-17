@@ -2,15 +2,19 @@ package com.github.cbuschka.retour.retour_processor;
 
 import com.amazonaws.services.sqs.AmazonSQS;
 import com.amazonaws.services.sqs.model.GetQueueUrlResult;
+import com.amazonaws.services.sqs.model.SendMessageRequest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Rule;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 
+import static org.hamcrest.CoreMatchers.*;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.*;
 
 public class SqsJsonMessageSenderTest {
@@ -51,7 +55,12 @@ public class SqsJsonMessageSenderTest {
 	}
 
 	private void thenMessageObjectIsSentAsJson() {
-		verify(this.amazonSQS).sendMessage(A_QUEUE_URL, MESSAGE_AS_JSON);
+		ArgumentCaptor<SendMessageRequest> capture = ArgumentCaptor.forClass(SendMessageRequest.class);
+		verify(this.amazonSQS).sendMessage(capture.capture());
+		SendMessageRequest request = capture.getValue();
+		assertThat(request.getQueueUrl(), is(A_QUEUE_URL));
+		assertThat(request.getMessageBody(), is(MESSAGE_AS_JSON));
+		assertThat(request.getMessageGroupId(), is(not(nullValue())));
 	}
 
 	private void whenMessageIsSent() {

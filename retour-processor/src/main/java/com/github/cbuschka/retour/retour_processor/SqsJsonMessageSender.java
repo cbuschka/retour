@@ -3,6 +3,7 @@ package com.github.cbuschka.retour.retour_processor;
 import com.amazonaws.services.sqs.AmazonSQS;
 import com.amazonaws.services.sqs.AmazonSQSClientBuilder;
 import com.amazonaws.services.sqs.model.GetQueueUrlResult;
+import com.amazonaws.services.sqs.model.SendMessageRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
@@ -10,6 +11,8 @@ import java.io.IOException;
 public class SqsJsonMessageSender<T> {
 
 	private ObjectMapper objectMapper = new ObjectMapper();
+
+	private static final String DUMMY_MESSAGE_GROUP_ID = "default";
 
 	private AmazonSQS sqs = AmazonSQSClientBuilder.defaultClient();
 
@@ -19,7 +22,9 @@ public class SqsJsonMessageSender<T> {
 
 		String queueUrl = locateQueue(queueName);
 
-		sqs.sendMessage(queueUrl, json);
+		SendMessageRequest sendMessageRequest = new SendMessageRequest(queueUrl, json);
+		sendMessageRequest.setMessageGroupId(DUMMY_MESSAGE_GROUP_ID);
+		sqs.sendMessage(sendMessageRequest);
 	}
 
 	private String locateQueue(String queueName) {
