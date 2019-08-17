@@ -32,6 +32,8 @@ public class ProcessRetourHandlerTest {
 	private LambdaLogger logger;
 	@Mock
 	private Map<String, Object> event;
+	@Mock
+	private RefundBuyerService refundBuyerService;
 	@InjectMocks
 	private ProcessRetourHandler processRetourHandler;
 
@@ -49,9 +51,9 @@ public class ProcessRetourHandlerTest {
 		whenHandlerInvoked();
 
 		thenSellerIsCharged();
+		thenBuyerIsRefunded();
 		thenHandlerReturnedNoValue();
 	}
-
 
 	@Test
 	public void doesNotReturnAnything() {
@@ -79,4 +81,9 @@ public class ProcessRetourHandlerTest {
 	private void givenIsAnEvent() {
 		when(event.toString()).thenReturn(EVENT_TO_STRING_FORM);
 	}
+
+	private void thenBuyerIsRefunded() {
+		verify(refundBuyerService).refundBuyer();
+	}
+
 }

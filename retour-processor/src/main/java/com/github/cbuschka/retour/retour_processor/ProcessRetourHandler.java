@@ -5,16 +5,18 @@ import com.amazonaws.services.lambda.runtime.RequestHandler;
 
 import java.util.Map;
 
-public class ProcessRetourHandler implements RequestHandler<Map<String, Object>, Void>
-{
+public class ProcessRetourHandler implements RequestHandler<Map<String, Object>, Void> {
 	private ChargeSellerService chargeSellerService = new ChargeSellerService();
 
-	public Void handleRequest(Map<String, Object> event, Context context)
-	{
+	private RefundBuyerService refundBuyerService = new RefundBuyerService();
+
+	public Void handleRequest(Map<String, Object> event, Context context) {
 		String message = String.valueOf(event);
 		context.getLogger().log(message);
 
 		chargeSellerService.chargeSeller();
+
+		refundBuyerService.refundBuyer();
 
 		return null;
 	}
