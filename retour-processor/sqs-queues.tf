@@ -38,3 +38,25 @@ resource "aws_sqs_queue" "retour_ack_fifo_queue" {
 
   redrive_policy = "{\"deadLetterTargetArn\":\"${aws_sqs_queue.dlq_fifo_queue.arn}\",\"maxReceiveCount\":5}"
 }
+
+resource "aws_sqs_queue" "charge_seller_fifo_queue" {
+  name = "charge_seller.fifo"
+  delay_seconds = 90
+  max_message_size = 2048
+  fifo_queue = true
+  content_based_deduplication = false
+  message_retention_seconds = 1209600
+
+  redrive_policy = "{\"deadLetterTargetArn\":\"${aws_sqs_queue.dlq_fifo_queue.arn}\",\"maxReceiveCount\":5}"
+}
+
+resource "aws_sqs_queue" "refund_buyer_fifo_queue" {
+  name = "refund_buyer.fifo"
+  delay_seconds = 90
+  max_message_size = 2048
+  fifo_queue = true
+  content_based_deduplication = false
+  message_retention_seconds = 1209600
+
+  redrive_policy = "{\"deadLetterTargetArn\":\"${aws_sqs_queue.dlq_fifo_queue.arn}\",\"maxReceiveCount\":5}"
+}
