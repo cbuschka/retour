@@ -10,8 +10,6 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 
-import java.util.Map;
-
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
@@ -20,7 +18,8 @@ import static org.mockito.Mockito.when;
 
 public class ProcessRetourHandlerTest {
 
-	private static final String EVENT_TO_STRING_FORM = "<<EVENT>>";
+	private static final String EVENT_TO_STRING_FORM = "eventAsString";
+	private static final String RETOUR_NO = "retourNo";
 
 	@Rule
 	public MockitoRule mockitoRule = MockitoJUnit.rule();
@@ -31,11 +30,13 @@ public class ProcessRetourHandlerTest {
 	@Mock
 	private LambdaLogger logger;
 	@Mock
-	private Map<String, Object> event;
+	private ProcessRetourMessage event;
 	@Mock
 	private RefundBuyerService refundBuyerService;
 	@InjectMocks
 	private ProcessRetourHandler processRetourHandler;
+	@Mock
+	private ProcessRetourMessageValidator processRetourMessageValidator;
 
 	private Object response = "RESPONSE_NOT_TOUCHED";
 
@@ -46,7 +47,7 @@ public class ProcessRetourHandlerTest {
 
 	@Test
 	public void chargesSeller() {
-		givenIsAnEvent();
+		givenIsAnValidEvent();
 
 		whenHandlerInvoked();
 
@@ -71,19 +72,20 @@ public class ProcessRetourHandlerTest {
 	}
 
 	private void thenSellerIsCharged() {
-		verify(chargeSellerService).chargeSeller();
+		verify(chargeSellerService).chargeSeller(RETOUR_NO);
 	}
 
 	private void thenHandlerReturnedNoValue() {
 		assertThat(this.response, is(nullValue()));
 	}
 
-	private void givenIsAnEvent() {
+	private void givenIsAnValidEvent() {
+		when(event.getRetourNo()).thenReturn(RETOUR_NO);
 		when(event.toString()).thenReturn(EVENT_TO_STRING_FORM);
 	}
 
 	private void thenBuyerIsRefunded() {
-		verify(refundBuyerService).refundBuyer();
+		verify(refundBuyerService).refundBuyer(RETOUR_NO);
 	}
 
 }

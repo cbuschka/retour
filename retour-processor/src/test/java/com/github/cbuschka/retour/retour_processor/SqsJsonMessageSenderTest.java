@@ -22,6 +22,7 @@ public class SqsJsonMessageSenderTest {
 	private static final String MESSAGE_AS_JSON = "json";
 	private static final String A_QUEUE_URL = "queueUrl";
 	private static final String QUEUE_NAME = "queueName";
+	private static final String DEDUP_ID = "dedupId";
 
 	@Rule
 	public MockitoRule mockitoRule = MockitoJUnit.rule();
@@ -60,11 +61,12 @@ public class SqsJsonMessageSenderTest {
 		SendMessageRequest request = capture.getValue();
 		assertThat(request.getQueueUrl(), is(A_QUEUE_URL));
 		assertThat(request.getMessageBody(), is(MESSAGE_AS_JSON));
+		assertThat(request.getMessageDeduplicationId(), is(DEDUP_ID));
 		assertThat(request.getMessageGroupId(), is(not(nullValue())));
 	}
 
 	private void whenMessageIsSent() {
-		this.sqsJsonMessageSender.send(QUEUE_NAME, messageObject);
+		this.sqsJsonMessageSender.send(QUEUE_NAME, messageObject, DEDUP_ID);
 	}
 
 

@@ -12,7 +12,7 @@ public class RefundBuyerService {
 
 	private SqsJsonMessageSender<Map> sqsJsonMessageSender = new SqsJsonMessageSender<>();
 
-	public void refundBuyer() {
-		sqsJsonMessageSender.send(QUEUE_NAME, Collections.emptyMap());
+	public void refundBuyer(String retourNo) {
+		sqsJsonMessageSender.send(QUEUE_NAME, Collections.emptyMap(), retourNo);
 	}
 }

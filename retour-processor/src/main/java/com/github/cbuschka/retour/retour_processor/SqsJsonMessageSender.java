@@ -4,6 +4,7 @@ import com.amazonaws.services.sqs.AmazonSQS;
 import com.amazonaws.services.sqs.AmazonSQSClientBuilder;
 import com.amazonaws.services.sqs.model.GetQueueUrlResult;
 import com.amazonaws.services.sqs.model.SendMessageRequest;
+import com.amazonaws.services.sqs.model.SendMessageResult;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
@@ -16,7 +17,7 @@ public class SqsJsonMessageSender<T> {
 
 	private AmazonSQS sqs = AmazonSQSClientBuilder.defaultClient();
 
-	public void send(String queueName, T message) {
+	public void send(String queueName, T message, String dedupId) {
 
 		String json = convertToJson(message);
 
@@ -24,6 +25,7 @@ public class SqsJsonMessageSender<T> {
 
 		SendMessageRequest sendMessageRequest = new SendMessageRequest(queueUrl, json);
 		sendMessageRequest.setMessageGroupId(DUMMY_MESSAGE_GROUP_ID);
+		sendMessageRequest.setMessageDeduplicationId(dedupId);
 		sqs.sendMessage(sendMessageRequest);
 	}
 

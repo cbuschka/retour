@@ -12,7 +12,7 @@ public class ChargeSellerService {
 
 	private SqsJsonMessageSender<Map> sqsJsonMessageSender = new SqsJsonMessageSender<>();
 
-	public void chargeSeller() {
-		sqsJsonMessageSender.send(QUEUE_NAME, Collections.emptyMap());
+	public void chargeSeller(String retourNo) {
+		sqsJsonMessageSender.send(QUEUE_NAME, Collections.emptyMap(), retourNo);
 	}
 }

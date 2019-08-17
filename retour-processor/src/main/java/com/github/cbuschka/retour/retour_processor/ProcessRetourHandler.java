@@ -3,20 +3,22 @@ package com.github.cbuschka.retour.retour_processor;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 
-import java.util.Map;
+public class ProcessRetourHandler implements RequestHandler<ProcessRetourMessage, Void> {
 
-public class ProcessRetourHandler implements RequestHandler<Map<String, Object>, Void> {
+	private ProcessRetourMessageValidator processRetourMessageValidator = new ProcessRetourMessageValidator();
+
 	private ChargeSellerService chargeSellerService = new ChargeSellerService();
 
 	private RefundBuyerService refundBuyerService = new RefundBuyerService();
 
-	public Void handleRequest(Map<String, Object> event, Context context) {
-		String message = String.valueOf(event);
-		context.getLogger().log(message);
+	public Void handleRequest(ProcessRetourMessage message, Context context) {
+		context.getLogger().log(String.valueOf(message));
 
-		chargeSellerService.chargeSeller();
+		processRetourMessageValidator.failIfInvalid(message);
 
-		refundBuyerService.refundBuyer();
+		chargeSellerService.chargeSeller(message.getRetourNo());
+
+		refundBuyerService.refundBuyer(message.getRetourNo());
 
 		return null;
 	}

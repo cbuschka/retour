@@ -15,6 +15,8 @@ import static org.mockito.Mockito.verify;
 
 public class ChargeSellerServiceTest {
 
+	private static final String RETOUR_NO = "retourNo";
+
 	@Rule
 	public MockitoRule mockitoRule = MockitoJUnit.rule();
 	@Mock
@@ -31,11 +33,11 @@ public class ChargeSellerServiceTest {
 	}
 
 	private void whenChargingSellerRequested() {
-		this.chargeSellerService.chargeSeller();
+		this.chargeSellerService.chargeSeller(RETOUR_NO);
 	}
 
 	private void thenMessageIsSentToChargeSellerQueue() {
-		verify(this.sqsJsonMessageSender).send(eq(ChargeSellerService.QUEUE_NAME), any(Map.class));
+		verify(this.sqsJsonMessageSender).send(eq(ChargeSellerService.QUEUE_NAME), any(Map.class), eq(RETOUR_NO));
 	}
 
 }
