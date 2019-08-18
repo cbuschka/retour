@@ -21,3 +21,15 @@ make deploy
 make destroy
 ```
 
+## Setup python tools
+```
+cd tools && \
+	virtualenv --python=python3.7 .py37 && \
+	source .py37/bin/activate && \
+	pip install -r requirements.txt
+```
+
+## Send test message
+```
+.py37/bin/python3.7 send_sqs_message.py
+```
