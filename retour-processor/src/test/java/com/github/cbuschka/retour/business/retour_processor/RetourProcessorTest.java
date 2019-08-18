@@ -1,12 +1,12 @@
 package com.github.cbuschka.retour.business.retour_processor;
 
 import com.github.cbuschka.retour.domain.charge_seller.ChargeSellerService;
-import com.github.cbuschka.retour.domain.order_store.OrderDao;
+import com.github.cbuschka.retour.domain.order_store.Order;
 import com.github.cbuschka.retour.domain.order_store.OrderNotFound;
-import com.github.cbuschka.retour.domain.order_store.OrderRecord;
+import com.github.cbuschka.retour.domain.order_store.OrderRepository;
+import com.github.cbuschka.retour.domain.order_store.RetourAlreadyProcessed;
 import com.github.cbuschka.retour.domain.refund_buyer.RefundBuyerService;
-import com.github.cbuschka.retour.domain.retour_store.RetourAlreadyProcessed;
-import com.github.cbuschka.retour.domain.retour_store.RetourDao;
+import com.github.cbuschka.retour.infrastructure.persistence.AggregateRoot;
 import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -14,6 +14,10 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 
+import java.util.Optional;
+
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
@@ -22,8 +26,6 @@ import static org.mockito.Mockito.when;
 public class RetourProcessorTest
 {
 	private static final String RETOUR_NO = "retourNo";
-	private static final String INVALID_MESSAGE_ERROR_MESSAGE = "invalidMessageErrorMessage";
-	private static final String UNKNOWN_ORDER_ERROR_MESSAGE = "unknownOrderErrorMessage";
 	private static final String ORDER_NO = "orderNo";
 
 	@Rule
@@ -31,7 +33,9 @@ public class RetourProcessorTest
 	@Mock
 	private ChargeSellerService chargeSellerService;
 	@Mock
-	private OrderRecord orderRecord;
+	private AggregateRoot<Order> orderAggregateRoot;
+	@Mock
+	private Order order;
 	@Mock
 	private RetourMessage retourMessage;
 	@Mock
@@ -45,12 +49,10 @@ public class RetourProcessorTest
 	@Mock
 	private RetourAckSender retourAckSender;
 	@Mock
-	private RetourDao retourDao;
-	@Mock
-	private OrderDao orderDao;
+	private OrderRepository orderRepository;
 
 	@Test
-	public void chargesSeller() throws RetourAlreadyProcessed, OrderNotFound
+	public void chargesSeller() throws RetourAlreadyProcessed
 	{
 		givenIsAnValidRetourMessage();
 		givenIsACorrespondingOrder();
@@ -64,14 +66,15 @@ public class RetourProcessorTest
 		thenAckIsSent();
 	}
 
-	private void givenIsACorrespondingOrder() throws OrderNotFound
+	private void givenIsACorrespondingOrder()
 	{
-		when(this.orderDao.findOrder(ORDER_NO)).thenReturn(orderRecord);
+		when(this.orderRepository.findByKey(ORDER_NO)).thenReturn(Optional.of(orderAggregateRoot));
+		when(this.orderAggregateRoot.getData()).thenReturn(this.order);
 	}
 
 	private void thenRetourRecordIsCreated() throws RetourAlreadyProcessed
 	{
-		verify(this.retourDao).createRetour(RETOUR_NO, ORDER_NO);
+		verify(this.order).processRetour(RETOUR_NO);
 	}
 
 	@Test
@@ -91,7 +94,7 @@ public class RetourProcessorTest
 
 
 	@Test
-	public void sendErrorWhenOrderIsUnknown() throws RetourMessageInvalid, OrderNotFound
+	public void sendErrorWhenOrderIsUnknown()
 	{
 		givenIsAnValidRetourMessage();
 		givenIsAnUnknownOrder();
@@ -105,14 +108,14 @@ public class RetourProcessorTest
 		thenAckIsNotSent();
 	}
 
-	private void givenIsAnUnknownOrder() throws OrderNotFound
+	private void givenIsAnUnknownOrder()
 	{
-		when(this.orderDao.findOrder(ORDER_NO)).thenThrow(new OrderNotFound(UNKNOWN_ORDER_ERROR_MESSAGE));
+		when(this.orderRepository.findByKey(ORDER_NO)).thenReturn(Optional.empty());
 	}
 
 	private void thenRetourRecordIsNotCreated()
 	{
-		verifyZeroInteractions(this.retourDao);
+		verifyZeroInteractions(this.order);
 	}
 
 	private void thenAckIsNotSent()
@@ -122,12 +125,12 @@ public class RetourProcessorTest
 
 	private void thenErrorIsSent()
 	{
-		verify(this.retourErrorSender).sendError(RETOUR_NO, INVALID_MESSAGE_ERROR_MESSAGE);
+		verify(this.retourErrorSender).sendError(eq(RETOUR_NO), any(RetourMessageInvalid.class));
 	}
 
 	private void thenUnknownOrderErrorIsSent()
 	{
-		verify(this.retourErrorSender).sendError(RETOUR_NO, UNKNOWN_ORDER_ERROR_MESSAGE);
+		verify(this.retourErrorSender).sendError(eq(RETOUR_NO), any(OrderNotFound.class));
 	}
 
 	private void thenBuyerIsNotRefunded()
@@ -163,7 +166,7 @@ public class RetourProcessorTest
 
 	private void givenIsAnInvalidRetourMessage() throws RetourMessageInvalid
 	{
-		doThrow(new RetourMessageInvalid(INVALID_MESSAGE_ERROR_MESSAGE)).when(this.retourValidator).validate(retourMessage);
+		doThrow(new RetourMessageInvalid(RETOUR_NO)).when(this.retourValidator).validate(retourMessage);
 		when(retourMessage.getRetourNo()).thenReturn(RETOUR_NO);
 	}
 

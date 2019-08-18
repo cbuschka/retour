@@ -1,7 +1,7 @@
 package com.github.cbuschka.retour.domain.charge_seller;
 
-import com.github.cbuschka.retour.util.Logger;
 import com.github.cbuschka.retour.infrastructure.sqs.SqsJsonMessageSender;
+import com.github.cbuschka.retour.util.Logger;
 import com.github.codestickers.VisibleForTesting;
 
 public class ChargeSellerService

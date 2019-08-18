@@ -1,11 +1,12 @@
 package com.github.cbuschka.retour.business.retour_processor;
 
 import com.github.cbuschka.retour.domain.charge_seller.ChargeSellerService;
-import com.github.cbuschka.retour.domain.order_store.OrderDao;
+import com.github.cbuschka.retour.domain.order_store.Order;
 import com.github.cbuschka.retour.domain.order_store.OrderNotFound;
+import com.github.cbuschka.retour.domain.order_store.OrderRepository;
+import com.github.cbuschka.retour.domain.order_store.RetourAlreadyProcessed;
 import com.github.cbuschka.retour.domain.refund_buyer.RefundBuyerService;
-import com.github.cbuschka.retour.domain.retour_store.RetourAlreadyProcessed;
-import com.github.cbuschka.retour.domain.retour_store.RetourDao;
+import com.github.cbuschka.retour.infrastructure.persistence.AggregateRoot;
 import com.github.cbuschka.retour.util.Logger;
 
 public class RetourProcessor
@@ -22,39 +23,40 @@ public class RetourProcessor
 
 	private RetourAckSender retourAckSender = new RetourAckSender();
 
-	private OrderDao orderDao = new OrderDao();
-
-	private RetourDao retourDao = new RetourDao();
+	private OrderRepository orderRepository = new OrderRepository();
 
 	public void processRetour(RetourMessage message)
 	{
 		logger.log("Processing " + message + "...");
 
-		try {
+		try
+		{
 			retourValidator.validate(message);
 
-			orderDao.findOrder(message.getOrderNo());
+			AggregateRoot<Order> orderRoot = orderRepository.findByKey(message.getOrderNo())
+					.orElseThrow(() -> new OrderNotFound(message.getOrderNo()));
+			Order order = orderRoot.getData();
 
 			String retourNo = message.getRetourNo();
-			retourDao.createRetour(retourNo, message.getOrderNo());
+			order.processRetour(retourNo);
 
 			chargeSellerService.chargeSeller(retourNo);
 			refundBuyerService.refundBuyer(retourNo);
 			retourAckSender.sendAck(retourNo);
 
-			retourDao.markRetourProcessed(retourNo);
+			orderRepository.store(orderRoot);
 		}
 		catch (RetourMessageInvalid | RetourAlreadyProcessed | OrderNotFound ex)
 		{
-			sendErrorMessage(message.getRetourNo(), ex.getMessage());
+			sendErrorMessage(message.getRetourNo(), ex);
 		}
 
 		logger.log(message + " processed.");
 	}
 
-	private void sendErrorMessage(String retourNo, String message)
+	private void sendErrorMessage(String retourNo, Exception ex)
 	{
-		logger.log(message);
-		retourErrorSender.sendError(retourNo, message);
+		logger.log(ex.getMessage());
+		retourErrorSender.sendError(retourNo, ex);
 	}
 }

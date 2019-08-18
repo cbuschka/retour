@@ -67,14 +67,8 @@ resource "aws_iam_policy" "lambda_policy" {
       {
         "Sid": "AllowRetourProcessorToAccessOrderTable",
         "Effect": "Allow",
-        "Action": [ "dynamodb:GetItem" ],
-        "Resource": "${aws_dynamodb_table.order_table.arn}"
-      },
-      {
-        "Sid": "AllowRetourProcessorToAccessRetourTable",
-        "Effect": "Allow",
         "Action": [ "dynamodb:GetItem", "dynamodb:PutItem", "dynamodb:UpdateItem" ],
-        "Resource": "${aws_dynamodb_table.retour_table.arn}"
+        "Resource": "${aws_dynamodb_table.order_table.arn}"
       }
     ]
   }

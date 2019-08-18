@@ -1,4 +1,4 @@
-package com.github.cbuschka.retour.domain.retour_store;
+package com.github.cbuschka.retour.domain.order_store;
 
 public class RetourAlreadyProcessed extends Exception
 {
