@@ -23,4 +23,12 @@ public class ProcessRetourMessage {
 	public String getRetourNo() {
 		return retourNo;
 	}
+
+	@Override
+	public String toString()
+	{
+		return "ProcessRetourMessage{" +
+				"retourNo='" + retourNo + '\'' +
+				'}';
+	}
 }

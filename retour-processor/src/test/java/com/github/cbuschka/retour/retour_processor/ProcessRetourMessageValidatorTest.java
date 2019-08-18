@@ -35,4 +35,10 @@ public class ProcessRetourMessageValidatorTest
 
 		this.validator.failIfInvalid(new ProcessRetourMessage(""));
 	}
+
+	@Test
+	public void minimalMessage()
+	{
+		this.validator.failIfInvalid(new ProcessRetourMessage("R1"));
+	}
 }
