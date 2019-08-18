@@ -1,6 +1,8 @@
 package com.github.cbuschka.retour.business.retour_processor;
 
 import com.github.cbuschka.retour.domain.charge_seller.ChargeSellerService;
+import com.github.cbuschka.retour.domain.order_store.OrderDao;
+import com.github.cbuschka.retour.domain.order_store.OrderNotFound;
 import com.github.cbuschka.retour.domain.refund_buyer.RefundBuyerService;
 import com.github.cbuschka.retour.domain.retour_store.RetourAlreadyProcessed;
 import com.github.cbuschka.retour.domain.retour_store.RetourDao;
@@ -20,6 +22,8 @@ public class RetourProcessor
 
 	private RetourAckSender retourAckSender = new RetourAckSender();
 
+	private OrderDao orderDao = new OrderDao();
+
 	private RetourDao retourDao = new RetourDao();
 
 	public void processRetour(RetourMessage message)
@@ -28,6 +32,8 @@ public class RetourProcessor
 
 		try {
 			retourValidator.validate(message);
+
+			orderDao.findOrder(message.getOrderNo());
 
 			String retourNo = message.getRetourNo();
 			retourDao.createRetour(retourNo);
@@ -38,7 +44,7 @@ public class RetourProcessor
 
 			retourDao.markRetourProcessed(retourNo);
 		}
-		catch (RetourMessageInvalid | RetourAlreadyProcessed ex)
+		catch (RetourMessageInvalid | RetourAlreadyProcessed | OrderNotFound ex)
 		{
 			sendErrorMessage(message.getRetourNo(), ex.getMessage());
 		}

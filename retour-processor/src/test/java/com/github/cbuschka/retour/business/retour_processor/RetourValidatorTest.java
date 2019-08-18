@@ -25,18 +25,26 @@ public class RetourValidatorTest {
 	public void retourNoRequired() throws RetourMessageInvalid {
 		expectedException.expect(RetourMessageInvalid.class);
 
-		whenValidated(new RetourMessage(null));
+		whenValidated(new RetourMessage(null, "orderNo"));
 	}
 
 	@Test
 	public void detectsEmptyRetourNo() throws RetourMessageInvalid {
 		expectedException.expect(RetourMessageInvalid.class);
 
-		whenValidated(new RetourMessage(""));
+		whenValidated(new RetourMessage("", "orderNo"));
+	}
+
+
+	@Test
+	public void detectsEmptyOrderNo() throws RetourMessageInvalid {
+		expectedException.expect(RetourMessageInvalid.class);
+
+		whenValidated(new RetourMessage("retourNo", ""));
 	}
 
 	@Test
 	public void minimalMessage() throws RetourMessageInvalid {
-		whenValidated(new RetourMessage("R1"));
+		whenValidated(new RetourMessage("R1","O1234"));
 	}
 }

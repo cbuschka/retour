@@ -7,7 +7,7 @@ sqs = boto3.resource('sqs')
 queue = sqs.get_queue_by_name(QueueName='retour')
 
 retourNo = "retour"+strftime("%Y%m%d%H%M%S", gmtime())
-retourJson = json.dumps({"retourNo":retourNo})
+retourJson = json.dumps({"retourNo":retourNo,"orderNo":"O1234"})
 response = queue.send_message(MessageBody=retourJson)
 
 print("Sent {} with messageId={}.".format(retourJson, response.get('MessageId')))
