@@ -15,11 +15,13 @@ public class RefundBuyerService
 	@VisibleForTesting
 	static final String QUEUE_NAME = "refund_buyer.fifo";
 
-	private SqsJsonMessageSender<Map> sqsJsonMessageSender = new SqsJsonMessageSender<>();
+	private SqsJsonMessageSender<RefundBuyerMessage> sqsJsonMessageSender = new SqsJsonMessageSender<>();
 
 	public void refundBuyer(String retourNo)
 	{
-		String messageId = sqsJsonMessageSender.send(QUEUE_NAME, Collections.emptyMap(), retourNo);
+		RefundBuyerMessage message = new RefundBuyerMessage(retourNo);
+
+		String messageId = sqsJsonMessageSender.send(QUEUE_NAME, message, retourNo);
 
 		logger.log("Refund buyer message messageId=" + messageId + " sent.");
 	}

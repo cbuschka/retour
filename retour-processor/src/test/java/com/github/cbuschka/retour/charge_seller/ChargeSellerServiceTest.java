@@ -21,7 +21,7 @@ public class ChargeSellerServiceTest {
 	@Rule
 	public MockitoRule mockitoRule = MockitoJUnit.rule();
 	@Mock
-	private SqsJsonMessageSender<Map> sqsJsonMessageSender;
+	private SqsJsonMessageSender<ChargeSellerMessage> sqsJsonMessageSender;
 	@InjectMocks
 	private ChargeSellerService chargeSellerService;
 
@@ -38,7 +38,7 @@ public class ChargeSellerServiceTest {
 	}
 
 	private void thenMessageIsSentToChargeSellerQueue() {
-		verify(this.sqsJsonMessageSender).send(eq(ChargeSellerService.QUEUE_NAME), any(Map.class), eq(RETOUR_NO));
+		verify(this.sqsJsonMessageSender).send(eq(ChargeSellerService.QUEUE_NAME), any(ChargeSellerMessage.class), eq(RETOUR_NO));
 	}
 
 }

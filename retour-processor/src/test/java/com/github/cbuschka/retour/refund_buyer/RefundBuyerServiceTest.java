@@ -21,7 +21,7 @@ public class RefundBuyerServiceTest {
 	@Rule
 	public MockitoRule mockitoRule = MockitoJUnit.rule();
 	@Mock
-	private SqsJsonMessageSender<Map> sqsJsonMessageSender;
+	private SqsJsonMessageSender<RefundBuyerMessage> sqsJsonMessageSender;
 	@InjectMocks
 	private RefundBuyerService refundBuyerService;
 
@@ -38,7 +38,7 @@ public class RefundBuyerServiceTest {
 	}
 
 	private void thenMessageIsSentToRefundBuyerQueue() {
-		verify(this.sqsJsonMessageSender).send(eq(RefundBuyerService.QUEUE_NAME), any(Map.class), eq(RETOUR_NO));
+		verify(this.sqsJsonMessageSender).send(eq(RefundBuyerService.QUEUE_NAME), any(RefundBuyerMessage.class), eq(RETOUR_NO));
 	}
 
 }
