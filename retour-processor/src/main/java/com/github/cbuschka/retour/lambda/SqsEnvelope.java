@@ -1,4 +1,4 @@
-package com.github.cbuschka.retour.retour_processor;
+package com.github.cbuschka.retour.lambda;
 
 import java.util.ArrayList;
 import java.util.List;

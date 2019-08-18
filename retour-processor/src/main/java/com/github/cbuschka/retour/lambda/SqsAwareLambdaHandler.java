@@ -1,4 +1,4 @@
-package com.github.cbuschka.retour.retour_processor;
+package com.github.cbuschka.retour.lambda;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
@@ -7,15 +7,19 @@ import com.github.cbuschka.retour.util.Logger;
 
 import java.io.IOException;
 
-public class ProcessRetourHandler implements RequestHandler<SqsEnvelope, Void>
+public abstract class SqsAwareLambdaHandler<T> implements RequestHandler<SqsEnvelope, Void>
 {
 	private Logger logger = Logger.get();
 
-	private RetourProcessor retourProcessor = new RetourProcessor();
-
 	private ObjectMapper objectMapper = new ObjectMapper();
 
-	public Void handleRequest(SqsEnvelope envelope, Context context)
+	private Class<T> inputType;
+
+	protected SqsAwareLambdaHandler(Class<T> inputType) {
+		this.inputType = inputType;
+	}
+
+	public final Void handleRequest(SqsEnvelope envelope, Context context)
 	{
 		if (envelope.Records.size() != 1)
 		{
@@ -23,20 +27,22 @@ public class ProcessRetourHandler implements RequestHandler<SqsEnvelope, Void>
 		}
 
 		SqsEnvelope.Record firstRecord = envelope.Records.get(0);
-		RetourMessage message = extractMessage(firstRecord);
+		T event = extractMessage(firstRecord);
 		logger.run(() -> {
-			this.retourProcessor.processRetour(message);
+			handle(event, context);
 		}, context.getLogger());
 
 
 		return null;
 	}
 
-	private RetourMessage extractMessage(SqsEnvelope.Record firstRecord)
+	protected abstract void handle(T t, Context context);
+
+	private T extractMessage(SqsEnvelope.Record firstRecord)
 	{
 		try
 		{
-			return this.objectMapper.readValue(firstRecord.body, RetourMessage.class);
+			return this.objectMapper.readValue(firstRecord.body, this.inputType);
 		}
 		catch (IOException ex)
 		{

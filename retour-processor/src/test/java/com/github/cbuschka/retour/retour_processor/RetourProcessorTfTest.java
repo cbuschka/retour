@@ -24,10 +24,10 @@ public class RetourProcessorTfTest {
 
 		whenParsed(tfFile);
 
-		thenHandlerClassNameIsOf(ProcessRetourHandler.class);
+		thenHandlerClassNameIsOf(RetourLambdaHandler.class);
 	}
 
-	private void thenHandlerClassNameIsOf(Class<ProcessRetourHandler> clazz) {
+	private void thenHandlerClassNameIsOf(Class<RetourLambdaHandler> clazz) {
 		Map resource = (Map) tfConfig.get("resource");
 		Map awsLambdaFunction = (Map) resource.get("aws_lambda_function");
 		Map retourProcessorFunction = (Map) awsLambdaFunction.get("retour_processor_function");
