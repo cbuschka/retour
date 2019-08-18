@@ -1,14 +1,27 @@
 package com.github.cbuschka.retour.retour_processor;
 
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 import java.util.Objects;
+import java.util.Set;
 
-public class ProcessRetourMessageValidator {
+public class ProcessRetourMessageValidator
+{
 
-	public void failIfInvalid(ProcessRetourMessage message) {
+	private ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+
+	public void failIfInvalid(ProcessRetourMessage message)
+	{
 		Objects.requireNonNull(message, "Message is missing.");
-		Objects.requireNonNull(message.getRetourNo(), "RetourNo missing.");
-		if (message.getRetourNo().isEmpty()) {
-			throw new IllegalArgumentException("RetourNo must not be empty.");
+
+		Validator validator = factory.getValidator();
+		Set<ConstraintViolation<ProcessRetourMessage>> violations = validator.validate(message);
+		if (!violations.isEmpty())
+		{
+			ConstraintViolation<ProcessRetourMessage> firstViolation = violations.iterator().next();
+			throw new IllegalArgumentException(firstViolation.getPropertyPath() + " " + firstViolation.getMessage());
 		}
 	}
 }

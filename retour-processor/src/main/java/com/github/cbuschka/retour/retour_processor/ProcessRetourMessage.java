@@ -1,9 +1,11 @@
 package com.github.cbuschka.retour.retour_processor;
 
 import com.github.codestickers.Used;
+import javax.validation.constraints.NotBlank;
 
 public class ProcessRetourMessage {
 
+	@NotBlank
 	private String retourNo;
 
 	@Used("required for deserialization")

@@ -4,7 +4,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-public class ProcessRetourMessageValidatorTest {
+public class ProcessRetourMessageValidatorTest
+{
 
 	@Rule
 	public ExpectedException expectedException = ExpectedException.none();
@@ -12,21 +13,24 @@ public class ProcessRetourMessageValidatorTest {
 	private ProcessRetourMessageValidator validator = new ProcessRetourMessageValidator();
 
 	@Test
-	public void messageRequired() {
+	public void messageRequired()
+	{
 		expectedException.expect(NullPointerException.class);
 
 		this.validator.failIfInvalid(null);
 	}
 
 	@Test
-	public void retourNoRequired() {
-		expectedException.expect(NullPointerException.class);
+	public void retourNoRequired()
+	{
+		expectedException.expect(IllegalArgumentException.class);
 
 		this.validator.failIfInvalid(new ProcessRetourMessage(null));
 	}
 
 	@Test
-	public void detectsEmptyRetourNo() {
+	public void detectsEmptyRetourNo()
+	{
 		expectedException.expect(IllegalArgumentException.class);
 
 		this.validator.failIfInvalid(new ProcessRetourMessage(""));
