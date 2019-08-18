@@ -7,21 +7,16 @@ import javax.validation.ValidatorFactory;
 import java.util.Objects;
 import java.util.Set;
 
-public class ProcessRetourMessageValidator
+public class RetourValidator
 {
-
 	private ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
 
-	public void failIfInvalid(ProcessRetourMessage message)
+	public RetourValidationResult getViolations(RetourMessage message)
 	{
 		Objects.requireNonNull(message, "Message is missing.");
 
 		Validator validator = factory.getValidator();
-		Set<ConstraintViolation<ProcessRetourMessage>> violations = validator.validate(message);
-		if (!violations.isEmpty())
-		{
-			ConstraintViolation<ProcessRetourMessage> firstViolation = violations.iterator().next();
-			throw new IllegalArgumentException(firstViolation.getPropertyPath() + " " + firstViolation.getMessage());
-		}
+		Set<ConstraintViolation<RetourMessage>> violations = validator.validate(message);
+		return new RetourValidationResult(violations);
 	}
 }

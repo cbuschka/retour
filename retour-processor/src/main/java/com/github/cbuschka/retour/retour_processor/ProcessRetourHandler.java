@@ -22,7 +22,7 @@ public class ProcessRetourHandler implements RequestHandler<SqsEnvelope, Void>
 		}
 
 		SqsEnvelope.Record firstRecord = envelope.Records.get(0);
-		ProcessRetourMessage message = extractMessage(firstRecord);
+		RetourMessage message = extractMessage(firstRecord);
 		logger.run(() -> {
 			this.retourProcessor.processRetour(message);
 		}, context.getLogger());
@@ -31,11 +31,11 @@ public class ProcessRetourHandler implements RequestHandler<SqsEnvelope, Void>
 		return null;
 	}
 
-	private ProcessRetourMessage extractMessage(SqsEnvelope.Record firstRecord)
+	private RetourMessage extractMessage(SqsEnvelope.Record firstRecord)
 	{
 		try
 		{
-			return this.objectMapper.readValue(firstRecord.body, ProcessRetourMessage.class);
+			return this.objectMapper.readValue(firstRecord.body, RetourMessage.class);
 		}
 		catch (IOException ex)
 		{

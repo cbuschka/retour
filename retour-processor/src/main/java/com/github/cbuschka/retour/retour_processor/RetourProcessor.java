@@ -4,21 +4,31 @@ public class RetourProcessor
 {
 	private static Logger logger = Logger.get();
 
-	private ProcessRetourMessageValidator processRetourMessageValidator = new ProcessRetourMessageValidator();
+	private RetourValidator retourValidator = new RetourValidator();
 
 	private ChargeSellerService chargeSellerService = new ChargeSellerService();
 
 	private RefundBuyerService refundBuyerService = new RefundBuyerService();
 
-	public void processRetour(ProcessRetourMessage message)
+	private RetourErrorSender retourErrorSender = new RetourErrorSender();
+
+	public void processRetour(RetourMessage message)
 	{
 		logger.log("Processing " + message + "...");
 
-		processRetourMessageValidator.failIfInvalid(message);
+		RetourValidationResult validationResult = retourValidator.getViolations(message);
+		if (!validationResult.isValid())
+		{
+			logger.log(message + " is invalid: " + validationResult.toMessage());
 
-		chargeSellerService.chargeSeller(message.getRetourNo());
+			retourErrorSender.sendError(message.getRetourNo(), validationResult.toMessage());
+		}
+		else
+		{
+			chargeSellerService.chargeSeller(message.getRetourNo());
 
-		refundBuyerService.refundBuyer(message.getRetourNo());
+			refundBuyerService.refundBuyer(message.getRetourNo());
+		}
 
 		logger.log(message + " processed.");
 	}

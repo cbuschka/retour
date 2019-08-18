@@ -3,16 +3,17 @@ package com.github.cbuschka.retour.retour_processor;
 import com.github.codestickers.Used;
 import javax.validation.constraints.NotBlank;
 
-public class ProcessRetourMessage {
+public class RetourMessage
+{
 
 	@NotBlank
 	private String retourNo;
 
 	@Used("required for deserialization")
-	public ProcessRetourMessage() {
+	public RetourMessage() {
 	}
 
-	public ProcessRetourMessage(String retourNo) {
+	public RetourMessage(String retourNo) {
 		this.retourNo = retourNo;
 	}
 
