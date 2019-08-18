@@ -1,6 +1,16 @@
 # Retour processing on aws
 
+## Ingredients
+* java 8
+* python
+* terraform
+* aws lambda
+* cloudwatch
+* dynamodb
+* sqs (standard and fifo)
+
 ## Prerequisites
+* linux
 * terraform
 * make
 * java 8
@@ -33,3 +43,19 @@ cd tools && \
 ```
 .py37/bin/python3.7 send_sqs_message.py
 ```
+
+## Loose Ends
+* Sender/receiver info in metadata
+* Queues per sender/receiver
+* Refund/charge amounts? Messages payload?
+* Sync calls?
+* TTL retour records
+* TTL messages
+* Framework? (micronaut?, ...)
+* Extract tf module for lambda with request/ack/error messages
+* Naming lambda role
+* Roles instead of custom policies
+* Recreate tf state?
+* Integration tests?
+* Load tests?
+* Environments?
