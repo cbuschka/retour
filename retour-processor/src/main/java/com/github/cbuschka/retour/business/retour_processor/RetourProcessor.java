@@ -36,7 +36,7 @@ public class RetourProcessor
 			orderDao.findOrder(message.getOrderNo());
 
 			String retourNo = message.getRetourNo();
-			retourDao.createRetour(retourNo);
+			retourDao.createRetour(retourNo, message.getOrderNo());
 
 			chargeSellerService.chargeSeller(retourNo);
 			refundBuyerService.refundBuyer(retourNo);
