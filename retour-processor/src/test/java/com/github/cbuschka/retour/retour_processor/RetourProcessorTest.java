@@ -34,6 +34,8 @@ public class RetourProcessorTest
 	private RetourValidationResult retourValidationResult;
 	@Mock
 	private RetourErrorSender retourErrorSender;
+	@Mock
+	private RetourAckSender retourAckSender;
 
 	@Test
 	public void chargesSeller()
@@ -45,6 +47,7 @@ public class RetourProcessorTest
 		thenSellerIsCharged();
 		thenBuyerIsRefunded();
 		thenNoErrorIsSent();
+		thenAckIsSent();
 	}
 
 	@Test
@@ -57,6 +60,12 @@ public class RetourProcessorTest
 		thenSellerIsNotCharged();
 		thenBuyerIsNotRefunded();
 		thenErrorIsSent();
+		thenAckIsNotSent();
+	}
+
+	private void thenAckIsNotSent()
+	{
+		verifyZeroInteractions(this.retourAckSender);
 	}
 
 	private void thenErrorIsSent()
@@ -89,6 +98,11 @@ public class RetourProcessorTest
 		when(this.retourValidator.getViolations(event)).thenReturn(this.retourValidationResult);
 		when(event.getRetourNo()).thenReturn(RETOUR_NO);
 		when(this.retourValidationResult.isValid()).thenReturn(true);
+	}
+
+	private void thenAckIsSent()
+	{
+		verify(this.retourAckSender).sendAck(RETOUR_NO);
 	}
 
 	private void givenIsAnInvalidEvent()

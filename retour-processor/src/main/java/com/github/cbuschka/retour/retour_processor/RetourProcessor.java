@@ -16,6 +16,8 @@ public class RetourProcessor
 
 	private RetourErrorSender retourErrorSender = new RetourErrorSender();
 
+	private RetourAckSender retourAckSender = new RetourAckSender();
+
 	public void processRetour(RetourMessage message)
 	{
 		logger.log("Processing " + message + "...");
@@ -32,6 +34,8 @@ public class RetourProcessor
 			chargeSellerService.chargeSeller(message.getRetourNo());
 
 			refundBuyerService.refundBuyer(message.getRetourNo());
+
+			retourAckSender.sendAck(message.getRetourNo());
 		}
 
 		logger.log(message + " processed.");
