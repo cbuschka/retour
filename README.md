@@ -26,7 +26,7 @@ make destroy
 cd tools && \
 	virtualenv --python=python3.7 .py37 && \
 	source .py37/bin/activate && \
-	pip install -r requirements.txt
+	.py37/bin/pip install -r requirements.txt
 ```
 
 ## Send test message
