@@ -24,12 +24,16 @@ public class Order
 
 	public void processRetour(String retourNo) throws RetourAlreadyProcessed
 	{
-		if (this.events.stream()
-				.anyMatch((e) -> e.getRetourNo().equals(retourNo)))
+		if (isRetourAlreadyProcessed(retourNo))
 		{
 			throw new RetourAlreadyProcessed("Retour retourNo=" + retourNo + " already processed.");
 		}
 
 		this.events.add(new RetourProcessedEvent(retourNo, Dates.nowUTCAsIsoString()));
+	}
+
+	public boolean isRetourAlreadyProcessed(String retourNo)
+	{
+		return this.events.stream().anyMatch((e) -> e.getRetourNo().equals(retourNo));
 	}
 }
