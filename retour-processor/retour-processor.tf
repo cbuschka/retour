@@ -8,7 +8,7 @@ resource "aws_lambda_function" "retour_processor_function" {
   source_code_hash = "${filebase64sha256(var.artifact)}"
   function_name = "retour_processor"
   handler = "com.github.cbuschka.retour.retour_processor.RetourLambdaHandler"
-  timeout = 10
+  timeout = 30
   reserved_concurrent_executions = 2
   memory_size = 256
   role = "${aws_iam_role.lambda_role.arn}"

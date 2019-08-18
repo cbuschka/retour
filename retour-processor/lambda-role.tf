@@ -63,6 +63,12 @@ resource "aws_iam_policy" "lambda_policy" {
         "Effect": "Allow",
         "Action": [ "sqs:GetQueueUrl", "sqs:SendMessage" ],
         "Resource": "${aws_sqs_queue.refund_buyer_fifo_queue.arn}"
+      },
+      {
+        "Sid": "AllowRetourProcessorToAccessRetourTable",
+        "Effect": "Allow",
+        "Action": [ "dynamodb:GetItem", "dynamodb:PutItem", "dynamodb:UpdateItem" ],
+        "Resource": "${aws_dynamodb_table.retour_table.arn}"
       }
     ]
   }
