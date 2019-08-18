@@ -17,7 +17,7 @@ public class SqsJsonMessageSender<T> {
 
 	private AmazonSQS sqs = AmazonSQSClientBuilder.defaultClient();
 
-	public void send(String queueName, T message, String dedupId) {
+	public String send(String queueName, T message, String dedupId) {
 
 		String json = convertToJson(message);
 
@@ -26,7 +26,8 @@ public class SqsJsonMessageSender<T> {
 		SendMessageRequest sendMessageRequest = new SendMessageRequest(queueUrl, json);
 		sendMessageRequest.setMessageGroupId(DUMMY_MESSAGE_GROUP_ID);
 		sendMessageRequest.setMessageDeduplicationId(dedupId);
-		sqs.sendMessage(sendMessageRequest);
+		SendMessageResult sendMessageResult = sqs.sendMessage(sendMessageRequest);
+		return sendMessageResult.getMessageId();
 	}
 
 	private String locateQueue(String queueName) {

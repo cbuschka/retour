@@ -5,7 +5,8 @@ import com.github.codestickers.VisibleForTesting;
 import java.util.Collections;
 import java.util.Map;
 
-public class RefundBuyerService {
+public class RefundBuyerService
+{
 
 	private static Logger logger = Logger.get();
 
@@ -14,9 +15,10 @@ public class RefundBuyerService {
 
 	private SqsJsonMessageSender<Map> sqsJsonMessageSender = new SqsJsonMessageSender<>();
 
-	public void refundBuyer(String retourNo) {
-		sqsJsonMessageSender.send(QUEUE_NAME, Collections.emptyMap(), retourNo);
+	public void refundBuyer(String retourNo)
+	{
+		String messageId = sqsJsonMessageSender.send(QUEUE_NAME, Collections.emptyMap(), retourNo);
 
-		logger.log("Refund buyer message sent.");
+		logger.log("Refund buyer message messageId=" + messageId + " sent.");
 	}
 }

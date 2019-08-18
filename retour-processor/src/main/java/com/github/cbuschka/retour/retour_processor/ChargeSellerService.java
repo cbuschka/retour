@@ -16,8 +16,8 @@ public class ChargeSellerService
 
 	public void chargeSeller(String retourNo)
 	{
-		sqsJsonMessageSender.send(QUEUE_NAME, Collections.emptyMap(), retourNo);
+		String messageId = sqsJsonMessageSender.send(QUEUE_NAME, Collections.emptyMap(), retourNo);
 
-		logger.log("Charge seller message sent.");
+		logger.log("Charge seller message messageId=" + messageId + " sent.");
 	}
 }
