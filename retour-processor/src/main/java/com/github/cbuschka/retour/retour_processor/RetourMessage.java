@@ -28,7 +28,7 @@ public class RetourMessage
 	@Override
 	public String toString()
 	{
-		return "ProcessRetourMessage{" +
+		return getClass().getSimpleName() + "{" +
 				"retourNo='" + retourNo + '\'' +
 				'}';
 	}
