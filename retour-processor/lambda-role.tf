@@ -35,25 +35,31 @@ resource "aws_iam_policy" "lambda_policy" {
         "Resource": "*"
       },
       {
-        "Sid": "AllowResourceProcessorToReceiveMessagesFromRetour",
+        "Sid": "AllowRetourProcessorToReceiveMessagesFromRetour",
         "Effect": "Allow",
         "Action": [ "sqs:GetQueueUrl", "sqs:ReceiveMessage", "sqs:DeleteMessage", "sqs:GetQueueAttributes" ],
         "Resource": "${aws_sqs_queue.retour_queue.arn}"
       },
       {
-        "Sid": "AllowResourceProcessorToSendErrorMessages",
+        "Sid": "AllowRetourProcessorToSendErrorMessages",
         "Effect": "Allow",
         "Action": [ "sqs:GetQueueUrl", "sqs:SendMessage" ],
         "Resource": "${aws_sqs_queue.retour_err_queue.arn}"
       },
       {
-        "Sid": "AllowResourceProcessorToAccessMessagesToChargeSeller",
+        "Sid": "AllowRetourProcessorToSendAckMessages",
+        "Effect": "Allow",
+        "Action": [ "sqs:GetQueueUrl", "sqs:SendMessage" ],
+        "Resource": "${aws_sqs_queue.retour_ack_fifo_queue.arn}"
+      },
+      {
+        "Sid": "AllowRetourProcessorToAccessMessagesToChargeSeller",
         "Effect": "Allow",
         "Action": [ "sqs:GetQueueUrl", "sqs:SendMessage" ],
         "Resource": "${aws_sqs_queue.charge_seller_fifo_queue.arn}"
       },
       {
-        "Sid": "AllowResourceProcessorToAccessMessagesToRefundBuyer",
+        "Sid": "AllowRetourProcessorToAccessMessagesToRefundBuyer",
         "Effect": "Allow",
         "Action": [ "sqs:GetQueueUrl", "sqs:SendMessage" ],
         "Resource": "${aws_sqs_queue.refund_buyer_fifo_queue.arn}"
