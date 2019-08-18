@@ -1,4 +1,4 @@
-package com.github.cbuschka.retour.retour_processor;
+package com.github.cbuschka.retour.sqs;
 
 import com.amazonaws.services.sqs.AmazonSQS;
 import com.amazonaws.services.sqs.AmazonSQSClientBuilder;

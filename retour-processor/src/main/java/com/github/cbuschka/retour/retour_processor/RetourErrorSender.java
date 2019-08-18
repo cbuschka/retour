@@ -1,5 +1,7 @@
 package com.github.cbuschka.retour.retour_processor;
 
+import com.github.cbuschka.retour.sqs.SqsJsonMessageSender;
+import com.github.cbuschka.retour.util.Logger;
 import com.github.codestickers.VisibleForTesting;
 
 public class RetourErrorSender

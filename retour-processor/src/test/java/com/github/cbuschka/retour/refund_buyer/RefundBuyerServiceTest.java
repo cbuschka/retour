@@ -1,5 +1,6 @@
-package com.github.cbuschka.retour.retour_processor;
+package com.github.cbuschka.retour.refund_buyer;
 
+import com.github.cbuschka.retour.sqs.SqsJsonMessageSender;
 import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -13,7 +14,7 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.verify;
 
-public class ChargeSellerServiceTest {
+public class RefundBuyerServiceTest {
 
 	private static final String RETOUR_NO = "retourNo";
 
@@ -22,22 +23,22 @@ public class ChargeSellerServiceTest {
 	@Mock
 	private SqsJsonMessageSender<Map> sqsJsonMessageSender;
 	@InjectMocks
-	private ChargeSellerService chargeSellerService;
+	private RefundBuyerService refundBuyerService;
 
 	@Test
 	public void sendsSqsMessage() {
 
-		whenChargingSellerRequested();
+		whenRefundingBuyerRequested();
 
-		thenMessageIsSentToChargeSellerQueue();
+		thenMessageIsSentToRefundBuyerQueue();
 	}
 
-	private void whenChargingSellerRequested() {
-		this.chargeSellerService.chargeSeller(RETOUR_NO);
+	private void whenRefundingBuyerRequested() {
+		this.refundBuyerService.refundBuyer(RETOUR_NO);
 	}
 
-	private void thenMessageIsSentToChargeSellerQueue() {
-		verify(this.sqsJsonMessageSender).send(eq(ChargeSellerService.QUEUE_NAME), any(Map.class), eq(RETOUR_NO));
+	private void thenMessageIsSentToRefundBuyerQueue() {
+		verify(this.sqsJsonMessageSender).send(eq(RefundBuyerService.QUEUE_NAME), any(Map.class), eq(RETOUR_NO));
 	}
 
 }

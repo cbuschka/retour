@@ -1,4 +1,4 @@
-package com.github.cbuschka.retour.retour_processor;
+package com.github.cbuschka.retour.util;
 
 import com.amazonaws.services.lambda.runtime.LambdaLogger;
 

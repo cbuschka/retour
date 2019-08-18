@@ -1,4 +1,4 @@
-package com.github.cbuschka.retour.retour_processor;
+package com.github.cbuschka.retour.sqs;
 
 import com.amazonaws.services.sqs.AmazonSQS;
 import com.amazonaws.services.sqs.model.GetQueueUrlResult;
@@ -6,6 +6,7 @@ import com.amazonaws.services.sqs.model.SendMessageRequest;
 import com.amazonaws.services.sqs.model.SendMessageResult;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.cbuschka.retour.sqs.SqsJsonMessageSender;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;

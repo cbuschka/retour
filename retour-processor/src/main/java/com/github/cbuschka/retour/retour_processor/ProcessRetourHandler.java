@@ -3,6 +3,7 @@ package com.github.cbuschka.retour.retour_processor;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.cbuschka.retour.util.Logger;
 
 import java.io.IOException;
 

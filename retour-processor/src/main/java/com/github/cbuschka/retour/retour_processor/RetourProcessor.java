@@ -1,5 +1,9 @@
 package com.github.cbuschka.retour.retour_processor;
 
+import com.github.cbuschka.retour.charge_seller.ChargeSellerService;
+import com.github.cbuschka.retour.refund_buyer.RefundBuyerService;
+import com.github.cbuschka.retour.util.Logger;
+
 public class RetourProcessor
 {
 	private static Logger logger = Logger.get();

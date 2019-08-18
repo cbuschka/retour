@@ -1,5 +1,7 @@
 package com.github.cbuschka.retour.retour_processor;
 
+import com.github.cbuschka.retour.charge_seller.ChargeSellerService;
+import com.github.cbuschka.retour.refund_buyer.RefundBuyerService;
 import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.InjectMocks;
