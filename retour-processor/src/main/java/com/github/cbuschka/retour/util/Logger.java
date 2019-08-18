@@ -1,7 +1,7 @@
 package com.github.cbuschka.retour.util;
 
 import com.amazonaws.services.lambda.runtime.Context;
-import com.github.cbuschka.retour.lambda.ThreadLocalContext;
+import com.github.cbuschka.retour.infrastructure.lambda.ThreadLocalContext;
 
 public class Logger
 {
