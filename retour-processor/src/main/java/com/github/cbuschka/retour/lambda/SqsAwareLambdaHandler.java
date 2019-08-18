@@ -3,14 +3,11 @@ package com.github.cbuschka.retour.lambda;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.cbuschka.retour.util.Logger;
 
 import java.io.IOException;
 
 public abstract class SqsAwareLambdaHandler<T> implements RequestHandler<SqsEnvelope, Void>
 {
-	private Logger logger = Logger.get();
-
 	private ObjectMapper objectMapper = new ObjectMapper();
 
 	private Class<T> inputType;
@@ -28,10 +25,9 @@ public abstract class SqsAwareLambdaHandler<T> implements RequestHandler<SqsEnve
 
 		SqsEnvelope.Record firstRecord = envelope.Records.get(0);
 		T event = extractMessage(firstRecord);
-		logger.run(() -> {
+		ThreadLocalContext.runWith(() -> {
 			handle(event, context);
-		}, context.getLogger());
-
+		}, context);
 
 		return null;
 	}
