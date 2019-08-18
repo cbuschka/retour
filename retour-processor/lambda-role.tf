@@ -35,6 +35,12 @@ resource "aws_iam_policy" "lambda_policy" {
         "Resource": "*"
       },
       {
+        "Sid": "AllowResourceProcessorToReceiveMessagesFromRetour",
+        "Effect": "Allow",
+        "Action": [ "sqs:GetQueueUrl", "sqs:ReceiveMessage", "sqs:DeleteMessage", "sqs:GetQueueAttributes" ],
+        "Resource": "${aws_sqs_queue.retour_queue.arn}"
+      },
+      {
         "Sid": "AllowResourceProcessorToAccessMessagesToChargeSeller",
         "Effect": "Allow",
         "Action": [ "sqs:GetQueueUrl", "sqs:SendMessage" ],
@@ -68,7 +74,6 @@ data "aws_iam_policy_document" "cloudwatch_lambda_retour_processor_log_group_acc
       "logs:CreateLogStream",
       "logs:PutLogEvents"
     ]
-
     resources = [
       "arn:aws:logs:::*",
     ]
