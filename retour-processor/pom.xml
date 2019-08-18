@@ -21,6 +21,10 @@
             <artifactId>aws-java-sdk-sqs</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-java-sdk-dynamodb</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.bertramlabs.plugins</groupId>
             <artifactId>hcl4j</artifactId>
             <scope>test</scope>

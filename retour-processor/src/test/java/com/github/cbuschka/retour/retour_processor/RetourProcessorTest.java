@@ -9,12 +9,9 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
-public class RetourProcessorTest
-{
+public class RetourProcessorTest {
 	private static final String RETOUR_NO = "retourNo";
 	private static final String ERROR_MESSAGE = "errorMessage";
 
@@ -23,7 +20,7 @@ public class RetourProcessorTest
 	@Mock
 	private ChargeSellerService chargeSellerService;
 	@Mock
-	private RetourMessage event;
+	private RetourMessage retourMessage;
 	@Mock
 	private RefundBuyerService refundBuyerService;
 	@InjectMocks
@@ -31,95 +28,88 @@ public class RetourProcessorTest
 	@Mock
 	private RetourValidator retourValidator;
 	@Mock
-	private RetourValidationResult retourValidationResult;
-	@Mock
 	private RetourErrorSender retourErrorSender;
 	@Mock
 	private RetourAckSender retourAckSender;
+	@Mock
+	private RetourDao retourDao;
 
 	@Test
-	public void chargesSeller()
-	{
-		givenIsAnValidEvent();
+	public void chargesSeller() throws RetourAlreadyProcessed {
+		givenIsAnValidRetourMessage();
 
 		whenHandlerInvoked();
 
+		thenRetourRecordIsCreated();
 		thenSellerIsCharged();
 		thenBuyerIsRefunded();
 		thenNoErrorIsSent();
 		thenAckIsSent();
 	}
 
+	private void thenRetourRecordIsCreated() throws RetourAlreadyProcessed {
+		verify(this.retourDao).createRetour(RETOUR_NO);
+	}
+
 	@Test
-	public void sendErrorWhenRetourInvalid()
-	{
-		givenIsAnInvalidEvent();
+	public void sendErrorWhenRetourInvalid() throws RetourMessageInvalid {
+		givenIsAnInvalidRetourMessage();
 
 		whenHandlerInvoked();
 
+		thenRetourRecordIsNotCreated();
 		thenSellerIsNotCharged();
 		thenBuyerIsNotRefunded();
 		thenErrorIsSent();
 		thenAckIsNotSent();
 	}
 
-	private void thenAckIsNotSent()
-	{
+	private void thenRetourRecordIsNotCreated() {
+		verifyZeroInteractions(this.retourDao);
+	}
+
+	private void thenAckIsNotSent() {
 		verifyZeroInteractions(this.retourAckSender);
 	}
 
-	private void thenErrorIsSent()
-	{
+	private void thenErrorIsSent() {
 		verify(this.retourErrorSender).sendError(RETOUR_NO, ERROR_MESSAGE);
 	}
 
-	private void thenBuyerIsNotRefunded()
-	{
+	private void thenBuyerIsNotRefunded() {
 		verifyZeroInteractions(this.refundBuyerService);
 	}
 
-	private void thenSellerIsNotCharged()
-	{
+	private void thenSellerIsNotCharged() {
 		verifyZeroInteractions(this.chargeSellerService);
 	}
 
-	private void whenHandlerInvoked()
-	{
-		this.retourProcessor.processRetour(event);
+	private void whenHandlerInvoked() {
+		this.retourProcessor.processRetour(retourMessage);
 	}
 
-	private void thenSellerIsCharged()
-	{
+	private void thenSellerIsCharged() {
 		verify(chargeSellerService).chargeSeller(RETOUR_NO);
 	}
 
-	private void givenIsAnValidEvent()
-	{
-		when(this.retourValidator.getViolations(event)).thenReturn(this.retourValidationResult);
-		when(event.getRetourNo()).thenReturn(RETOUR_NO);
-		when(this.retourValidationResult.isValid()).thenReturn(true);
+	private void givenIsAnValidRetourMessage() {
+		when(retourMessage.getRetourNo()).thenReturn(RETOUR_NO);
 	}
 
-	private void thenAckIsSent()
-	{
+	private void thenAckIsSent() {
 		verify(this.retourAckSender).sendAck(RETOUR_NO);
 	}
 
-	private void givenIsAnInvalidEvent()
-	{
-		when(this.retourValidator.getViolations(event)).thenReturn(this.retourValidationResult);
-		when(event.getRetourNo()).thenReturn(RETOUR_NO);
-		when(this.retourValidationResult.isValid()).thenReturn(false);
-		when(this.retourValidationResult.toMessage()).thenReturn(ERROR_MESSAGE);
+	private void givenIsAnInvalidRetourMessage() throws RetourMessageInvalid {
+		doThrow(new RetourMessageInvalid(ERROR_MESSAGE)).when(this.retourValidator).validate(retourMessage);
+		when(retourMessage.getRetourNo()).thenReturn(RETOUR_NO);
 	}
 
-	private void thenBuyerIsRefunded()
-	{
+	private void thenBuyerIsRefunded() {
 		verify(refundBuyerService).refundBuyer(RETOUR_NO);
 	}
 
-	private void thenNoErrorIsSent()
-	{
+	private void thenNoErrorIsSent() {
 		verifyZeroInteractions(this.retourErrorSender);
 	}
 

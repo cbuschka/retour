@@ -7,16 +7,22 @@ import javax.validation.ValidatorFactory;
 import java.util.Objects;
 import java.util.Set;
 
-public class RetourValidator
-{
+public class RetourValidator {
 	private ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
 
-	public RetourValidationResult getViolations(RetourMessage message)
-	{
+	public void validate(RetourMessage message) throws RetourMessageInvalid {
+
+		Set<ConstraintViolation<RetourMessage>> violations = getViolations(message);
+		if (!violations.isEmpty()) {
+			throw new RetourMessageInvalid(violations.toString());
+		}
+	}
+
+	private Set<ConstraintViolation<RetourMessage>> getViolations(RetourMessage message) {
 		Objects.requireNonNull(message, "Message is missing.");
 
 		Validator validator = factory.getValidator();
 		Set<ConstraintViolation<RetourMessage>> violations = validator.validate(message);
-		return new RetourValidationResult(violations);
+		return violations;
 	}
 }
