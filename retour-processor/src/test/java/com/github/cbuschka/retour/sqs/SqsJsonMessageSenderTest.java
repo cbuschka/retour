@@ -33,7 +33,7 @@ public class SqsJsonMessageSenderTest
 	@Rule
 	public MockitoRule mockitoRule = MockitoJUnit.rule();
 	@InjectMocks
-	private SqsJsonMessageSender sqsJsonMessageSender;
+	private SqsJsonMessageSender<Object> sqsJsonMessageSender;
 	@Mock
 	private ObjectMapper objectMapper;
 	@Mock
