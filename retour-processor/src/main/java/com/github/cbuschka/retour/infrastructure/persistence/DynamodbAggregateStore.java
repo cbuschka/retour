@@ -18,6 +18,7 @@ import java.util.Optional;
 
 public abstract class DynamodbAggregateStore<T>
 {
+	private static final int INITIAL_VERSION = 0;
 	private static final String DATA_COLUMN_NAME = "Data";
 	private static final String VERSION_COLUMN_NAME = "Version";
 
@@ -41,7 +42,7 @@ public abstract class DynamodbAggregateStore<T>
 	public AggregateRoot<T> create(String key)
 	{
 		T data = fromJson("{}");
-		return new AggregateRoot<>(key, 0, data);
+		return new AggregateRoot<>(key, INITIAL_VERSION, data);
 	}
 
 	public Optional<AggregateRoot<T>> findByKey(String key)
@@ -59,7 +60,7 @@ public abstract class DynamodbAggregateStore<T>
 		return Optional.of(root);
 	}
 
-	public void store(AggregateRoot<T> root)
+	public void store(AggregateRoot<T> root) throws ConcurrentModification
 	{
 		String json = toJson(root.getData());
 
@@ -76,7 +77,7 @@ public abstract class DynamodbAggregateStore<T>
 							.withPrimaryKey(this.keyColumnName, root.getKey())
 							.withInt(VERSION_COLUMN_NAME, root.getVersion() + 1)
 							.withJSON(DATA_COLUMN_NAME, json))
-					.withConditionExpression(root.getVersion() == 0 ?
+					.withConditionExpression(root.getVersion() == INITIAL_VERSION ?
 							"attribute_not_exists(" + VERSION_COLUMN_NAME + ")" :
 							"(" + VERSION_COLUMN_NAME + " = :expectedVersion)")
 					.withValueMap(attributeValues));

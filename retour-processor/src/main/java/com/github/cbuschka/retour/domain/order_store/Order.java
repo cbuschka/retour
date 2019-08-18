@@ -2,11 +2,14 @@ package com.github.cbuschka.retour.domain.order_store;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.github.cbuschka.retour.util.Dates;
+import com.github.codestickers.Hint;
+import com.github.codestickers.Note;
 import com.github.codestickers.Used;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Note("Order in the bounded context of retour processing.")
 public class Order
 {
 	@JsonProperty
