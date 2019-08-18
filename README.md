@@ -59,3 +59,9 @@ cd tools && \
 * Integration tests?
 * Load tests?
 * Environments?
+
+## Author
+Written 2019 by [Cornelius Buschka](https://github.com/cbuschka).
+
+## License
+[MIT](./license.txt)
