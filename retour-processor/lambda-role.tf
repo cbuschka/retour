@@ -41,6 +41,12 @@ resource "aws_iam_policy" "lambda_policy" {
         "Resource": "${aws_sqs_queue.retour_queue.arn}"
       },
       {
+        "Sid": "AllowResourceProcessorToSendErrorMessages",
+        "Effect": "Allow",
+        "Action": [ "sqs:GetQueueUrl", "sqs:SendMessage" ],
+        "Resource": "${aws_sqs_queue.retour_err_queue.arn}"
+      },
+      {
         "Sid": "AllowResourceProcessorToAccessMessagesToChargeSeller",
         "Effect": "Allow",
         "Action": [ "sqs:GetQueueUrl", "sqs:SendMessage" ],
