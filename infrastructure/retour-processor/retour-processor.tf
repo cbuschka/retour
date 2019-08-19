@@ -1,5 +1,5 @@
 variable "artifact" {
-  default = "./retour-processor/target/retour-processor-1.0.0-SNAPSHOT.jar"
+  default = "../retour-processor/target/retour-processor-1.0.0-SNAPSHOT.jar"
 }
 
 resource "aws_lambda_function" "retour_processor_function" {
