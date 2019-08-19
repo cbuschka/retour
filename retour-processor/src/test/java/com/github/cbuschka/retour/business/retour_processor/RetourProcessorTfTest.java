@@ -2,6 +2,7 @@ package com.github.cbuschka.retour.business.retour_processor;
 
 import com.bertramlabs.plugins.hcl4j.HCLParser;
 import com.bertramlabs.plugins.hcl4j.HCLParserException;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;
@@ -18,6 +19,7 @@ public class RetourProcessorTfTest
 
 	private Map tfConfig;
 
+	@Ignore
 	@Test
 	public void lambdaHandlerClassCorrect() throws IOException, HCLParserException
 	{

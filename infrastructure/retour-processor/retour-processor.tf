@@ -1,5 +1,5 @@
 variable "artifact" {
-  default = "../retour-processor/target/retour-processor-1.0.0-SNAPSHOT.jar"
+  default = "../retour-processor/target/retour-processor-1.0.0-SNAPSHOT-aws.jar"
 }
 
 resource "aws_lambda_function" "retour_processor_function" {
@@ -7,7 +7,7 @@ resource "aws_lambda_function" "retour_processor_function" {
   filename = "${var.artifact}"
   source_code_hash = "${filebase64sha256(var.artifact)}"
   function_name = "retour_processor"
-  handler = "com.github.cbuschka.retour.business.retour_processor.RetourLambdaHandler"
+  handler = "com.github.cbuschka.retour.business.retour_processor.RetourProcessorRequestHandler"
   timeout = 30
   reserved_concurrent_executions = 2
   memory_size = 256

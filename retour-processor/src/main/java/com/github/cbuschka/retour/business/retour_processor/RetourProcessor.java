@@ -9,7 +9,9 @@ import com.github.cbuschka.retour.domain.refund_buyer.RefundBuyerService;
 import com.github.cbuschka.retour.infrastructure.persistence.AggregateRoot;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
+@Component
 public class RetourProcessor
 {
 	private static Logger logger = LoggerFactory.getLogger(RetourProcessor.class);
