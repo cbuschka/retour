@@ -1,18 +1,22 @@
 package com.github.cbuschka.retour.business.retour_processor;
 
 import com.amazonaws.services.lambda.runtime.Context;
-import com.github.cbuschka.retour.infrastructure.lambda.SqsAwareLambdaHandler;
+import com.amazonaws.services.lambda.runtime.RequestStreamHandler;
+import com.github.cbuschka.retour.infrastructure.lambda.SqsAwareLambdaHandlerAdapter;
 
-public class RetourLambdaHandler extends SqsAwareLambdaHandler<RetourMessage> {
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
+public class RetourLambdaHandler implements RequestStreamHandler
+{
 	private RetourProcessor retourProcessor = new RetourProcessor();
 
-	public RetourLambdaHandler() {
-		super(RetourMessage.class);
-	}
+	private SqsAwareLambdaHandlerAdapter<RetourMessage> sqsAwareLambdaHandlerAdapter = new SqsAwareLambdaHandlerAdapter<>(RetourMessage.class);
 
-	@Override
-	protected void handle(RetourMessage message, Context context) {
-		this.retourProcessor.processRetour(message);
+	public void handleRequest(InputStream input, OutputStream output, Context context) throws IOException
+	{
+		this.sqsAwareLambdaHandlerAdapter.handleRequest(input, output, context,
+				(m, c) -> this.retourProcessor.processRetour(m));
 	}
 }
