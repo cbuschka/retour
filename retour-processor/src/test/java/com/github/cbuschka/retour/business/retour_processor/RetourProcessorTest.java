@@ -52,7 +52,7 @@ public class RetourProcessorTest
 	private OrderRepository orderRepository;
 
 	@Test
-	public void chargesSeller() throws RetourAlreadyProcessed
+	public void chargesSeller() throws RetourAlreadyProcessed, OrderNotFound
 	{
 		givenIsAnValidRetourMessage();
 		givenIsACorrespondingOrder();
@@ -66,9 +66,9 @@ public class RetourProcessorTest
 		thenAckIsSent();
 	}
 
-	private void givenIsACorrespondingOrder()
+	private void givenIsACorrespondingOrder() throws OrderNotFound
 	{
-		when(this.orderRepository.findByKey(ORDER_NO)).thenReturn(Optional.of(orderAggregateRoot));
+		when(this.orderRepository.findByOrderNo(ORDER_NO)).thenReturn(orderAggregateRoot);
 		when(this.orderAggregateRoot.getData()).thenReturn(this.order);
 	}
 
@@ -94,7 +94,7 @@ public class RetourProcessorTest
 
 
 	@Test
-	public void sendErrorWhenOrderIsUnknown()
+	public void sendErrorWhenOrderIsUnknown() throws OrderNotFound
 	{
 		givenIsAnValidRetourMessage();
 		givenIsAnUnknownOrder();
@@ -108,9 +108,9 @@ public class RetourProcessorTest
 		thenAckIsNotSent();
 	}
 
-	private void givenIsAnUnknownOrder()
+	private void givenIsAnUnknownOrder() throws OrderNotFound
 	{
-		when(this.orderRepository.findByKey(ORDER_NO)).thenReturn(Optional.empty());
+		doThrow(new OrderNotFound(ORDER_NO)).when(this.orderRepository).findByOrderNo(ORDER_NO);
 	}
 
 	private void thenRetourRecordIsNotCreated()

@@ -11,9 +11,10 @@ import java.util.Optional;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
-public class OrderDaoIntegrationTest
+public class OrderRepositoryIntegrationTest
 {
 	private static final String ORDER_NO = "O1234";
+	private static final String UNKNOWN_ORDER_NO = "DOES_NOT_EXIST";
 
 	@Rule
 	public ExpectedException expectedException = ExpectedException.none();
@@ -23,8 +24,16 @@ public class OrderDaoIntegrationTest
 	@Test
 	public void doesNotFindNonExistentOrder()
 	{
-		Optional<AggregateRoot<Order>> optionalOrderRoot = orderRepository.findByKey("DOES_NOT_EXIST");
+		Optional<AggregateRoot<Order>> optionalOrderRoot = orderRepository.findByKey(UNKNOWN_ORDER_NO);
 		assertThat(optionalOrderRoot.isPresent(), is(false));
+	}
+
+	@Test
+	public void throwsOrderNotFoundForNonExistentOrder() throws OrderNotFound
+	{
+		expectedException.expect(OrderNotFound.class);
+
+		orderRepository.findByOrderNo(UNKNOWN_ORDER_NO);
 	}
 
 	@Test

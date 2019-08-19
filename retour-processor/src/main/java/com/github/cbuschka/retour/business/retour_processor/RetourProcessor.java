@@ -33,8 +33,7 @@ public class RetourProcessor
 		{
 			retourValidator.validate(message);
 
-			AggregateRoot<Order> orderRoot = orderRepository.findByKey(message.getOrderNo())
-					.orElseThrow(() -> new OrderNotFound(message.getOrderNo()));
+			AggregateRoot<Order> orderRoot = orderRepository.findByOrderNo(message.getOrderNo());
 			Order order = orderRoot.getData();
 
 			String retourNo = message.getRetourNo();
