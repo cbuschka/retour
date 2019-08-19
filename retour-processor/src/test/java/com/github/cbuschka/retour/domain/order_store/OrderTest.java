@@ -19,16 +19,16 @@ public class OrderTest
 	@Test
 	public void detectsDupRetours() throws RetourAlreadyProcessed
 	{
-		order.processRetour(RETOUR_NO);
+		order.createRetour(RETOUR_NO);
 
 		expectedException.expect(RetourAlreadyProcessed.class);
-		order.processRetour(RETOUR_NO);
+		order.createRetour(RETOUR_NO);
 	}
 
 	@Test
 	public void processesRetours() throws RetourAlreadyProcessed
 	{
-		order.processRetour(RETOUR_NO);
+		order.createRetour(RETOUR_NO);
 
 		assertThat(order.isRetourAlreadyProcessed(RETOUR_NO), is(true));
 	}

@@ -2,7 +2,6 @@ package com.github.cbuschka.retour.domain.order_store;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.github.cbuschka.retour.util.Dates;
-import com.github.codestickers.Hint;
 import com.github.codestickers.Note;
 import com.github.codestickers.Used;
 
@@ -13,26 +12,26 @@ import java.util.List;
 public class Order
 {
 	@JsonProperty
-	private List<RetourProcessedEvent> events = new ArrayList<>();
+	private List<RetourCreatedEvent> events = new ArrayList<>();
 
 	@Used("Required by jackson.")
 	public Order()
 	{
 	}
 
-	public Order(List<RetourProcessedEvent> events)
+	public Order(List<RetourCreatedEvent> events)
 	{
 		this.events = events;
 	}
 
-	public void processRetour(String retourNo) throws RetourAlreadyProcessed
+	public void createRetour(String retourNo) throws RetourAlreadyProcessed
 	{
 		if (isRetourAlreadyProcessed(retourNo))
 		{
 			throw new RetourAlreadyProcessed("Retour retourNo=" + retourNo + " already processed.");
 		}
 
-		this.events.add(new RetourProcessedEvent(retourNo, Dates.nowUTCAsIsoString()));
+		this.events.add(new RetourCreatedEvent(retourNo, Dates.nowUTCAsIsoString()));
 	}
 
 	public boolean isRetourAlreadyProcessed(String retourNo)

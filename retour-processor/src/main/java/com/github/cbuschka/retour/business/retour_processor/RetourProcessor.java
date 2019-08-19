@@ -38,7 +38,7 @@ public class RetourProcessor
 			Order order = orderRoot.getData();
 
 			String retourNo = message.getRetourNo();
-			order.processRetour(retourNo);
+			order.createRetour(retourNo);
 
 			chargeSellerService.chargeSeller(retourNo);
 			refundBuyerService.refundBuyer(retourNo);

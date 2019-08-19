@@ -2,18 +2,18 @@ package com.github.cbuschka.retour.domain.order_store;
 
 import com.github.codestickers.Used;
 
-public class RetourProcessedEvent
+public class RetourCreatedEvent
 {
 	private String retourNo;
 
 	private String processedAt;
 
 	@Used("Required by jackson.")
-	public RetourProcessedEvent()
+	public RetourCreatedEvent()
 	{
 	}
 
-	public RetourProcessedEvent(String retourNo, String processedAt)
+	public RetourCreatedEvent(String retourNo, String processedAt)
 	{
 		this.retourNo = retourNo;
 		this.processedAt = processedAt;

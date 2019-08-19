@@ -74,7 +74,7 @@ public class RetourProcessorTest
 
 	private void thenRetourRecordIsCreated() throws RetourAlreadyProcessed
 	{
-		verify(this.order).processRetour(RETOUR_NO);
+		verify(this.order).createRetour(RETOUR_NO);
 	}
 
 	@Test
