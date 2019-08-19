@@ -45,6 +45,7 @@ cd tools && \
 ```
 
 ## Loose Ends
+* Retour is written Retoure
 * Sender/receiver info in metadata
 * Queues per sender/receiver
 * Refund/charge amounts? Messages payload?
@@ -59,7 +60,7 @@ cd tools && \
 * Integration tests?
 * Load tests?
 * Environments?
-* Order cancelled? Order already retoured?
+* Order cancelled?
 
 ## Author
 Written 2019 by [Cornelius Buschka](https://github.com/cbuschka).
