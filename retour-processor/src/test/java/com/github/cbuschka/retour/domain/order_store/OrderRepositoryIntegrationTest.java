@@ -2,6 +2,7 @@ package com.github.cbuschka.retour.domain.order_store;
 
 import com.github.cbuschka.retour.infrastructure.persistence.AggregateRoot;
 import com.github.cbuschka.retour.infrastructure.persistence.ConcurrentModification;
+import com.github.cbuschka.retour.util.Dates;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -45,6 +46,15 @@ public class OrderRepositoryIntegrationTest
 		assertThat(orderRoot.getKey(), is(ORDER_NO));
 	}
 
+	@Test
+	public void saveAndRereadNewOne()
+	{
+		String orderNo = "OTEST" + Dates.nowUTCAsIsoString();
+		createPersistentOrder(orderNo);
+
+		AggregateRoot<Order> orderRoot = this.orderRepository.findByKey(orderNo).get();
+		assertThat(orderRoot.getKey(), is(orderNo));
+	}
 
 	@Test
 	public void detectsConcurrentModification()
