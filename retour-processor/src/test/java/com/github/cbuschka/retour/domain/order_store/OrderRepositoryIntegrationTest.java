@@ -14,7 +14,9 @@ import static org.junit.Assert.assertThat;
 
 public class OrderRepositoryIntegrationTest
 {
-	private static final String ORDER_NO = "O1234";
+	private String randomNo = Long.toHexString(System.currentTimeMillis());
+	private String orderNo = "O" + randomNo;
+	private String retourNo = "R" + randomNo;
 	private static final String UNKNOWN_ORDER_NO = "DOES_NOT_EXIST";
 
 	@Rule
@@ -38,16 +40,16 @@ public class OrderRepositoryIntegrationTest
 	}
 
 	@Test
-	public void findsWhatIsStored()
+	public void findsWhatIsStored() throws RetourAlreadyExists
 	{
-		createPersistentOrder(ORDER_NO);
+		createPersistentOrder(orderNo);
 
-		AggregateRoot<Order> orderRoot = this.orderRepository.findByKey(ORDER_NO).get();
-		assertThat(orderRoot.getKey(), is(ORDER_NO));
+		AggregateRoot<Order> orderRoot = this.orderRepository.findByKey(orderNo).get();
+		assertThat(orderRoot.getKey(), is(orderNo));
 	}
 
 	@Test
-	public void saveAndRereadNewOne()
+	public void saveAndRereadNewOne() throws RetourAlreadyExists
 	{
 		String orderNo = "OTEST" + Dates.nowUTCAsIsoString();
 		createPersistentOrder(orderNo);
@@ -57,23 +59,34 @@ public class OrderRepositoryIntegrationTest
 	}
 
 	@Test
-	public void detectsConcurrentModification()
+	public void detectsConcurrentModification() throws RetourAlreadyExists
 	{
-		createPersistentOrder(ORDER_NO);
+		createPersistentOrder(orderNo);
 
-		AggregateRoot<Order> orderRoot1 = this.orderRepository.findByKey(ORDER_NO).get();
-		AggregateRoot<Order> orderRoot2 = this.orderRepository.findByKey(ORDER_NO).get();
+		AggregateRoot<Order> orderRoot1 = this.orderRepository.findByKey(orderNo).get();
+		AggregateRoot<Order> orderRoot2 = this.orderRepository.findByKey(orderNo).get();
 		this.orderRepository.store(orderRoot1);
 
 		expectedException.expect(ConcurrentModification.class);
 		this.orderRepository.store(orderRoot2);
 	}
 
-	private void createPersistentOrder(String orderNo)
+	private void createPersistentOrder(String orderNo) throws RetourAlreadyExists
 	{
 		AggregateRoot<Order> orderRoot = this.orderRepository.findByKey(orderNo)
 				.orElseGet(() -> this.orderRepository.create(orderNo));
+		orderRoot.getData().createRetour(retourNo);
 		orderRepository.store(orderRoot);
+	}
+
+	@Test
+	public void createAndStoreOrderWithSingleOpenRetour() throws RetourAlreadyExists
+	{
+		AggregateRoot<Order> orderRoot = this.orderRepository.create(orderNo);
+		orderRoot.getData().createRetour(retourNo);
+		orderRepository.store(orderRoot);
+
+		System.err.println(orderNo);
 	}
 
 }

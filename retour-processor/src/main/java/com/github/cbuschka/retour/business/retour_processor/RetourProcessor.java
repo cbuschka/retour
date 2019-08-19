@@ -4,7 +4,8 @@ import com.github.cbuschka.retour.domain.charge_seller.ChargeSellerService;
 import com.github.cbuschka.retour.domain.order_store.Order;
 import com.github.cbuschka.retour.domain.order_store.OrderNotFound;
 import com.github.cbuschka.retour.domain.order_store.OrderRepository;
-import com.github.cbuschka.retour.domain.order_store.RetourAlreadyProcessed;
+import com.github.cbuschka.retour.domain.order_store.RetourAlreadyReceived;
+import com.github.cbuschka.retour.domain.order_store.RetourNotKnown;
 import com.github.cbuschka.retour.domain.refund_buyer.RefundBuyerService;
 import com.github.cbuschka.retour.infrastructure.persistence.AggregateRoot;
 import org.slf4j.Logger;
@@ -26,7 +27,7 @@ public class RetourProcessor
 
 	private OrderRepository orderRepository = new OrderRepository();
 
-	public void processRetour(RetourMessage message)
+	public void processRetour(ReceiveRetourCommand message)
 	{
 		logger.info("Processing " + message + "...");
 
@@ -38,7 +39,7 @@ public class RetourProcessor
 			Order order = orderRoot.getData();
 
 			String retourNo = message.getRetourNo();
-			order.createRetour(retourNo);
+			order.receiveRetour(retourNo);
 
 			chargeSellerService.chargeSeller(retourNo);
 			refundBuyerService.refundBuyer(retourNo);
@@ -46,8 +47,10 @@ public class RetourProcessor
 
 			orderRepository.store(orderRoot);
 		}
-		catch (RetourMessageInvalid | RetourAlreadyProcessed | OrderNotFound ex)
+		catch (RetourMessageInvalid | RetourAlreadyReceived | RetourNotKnown | OrderNotFound ex)
 		{
+			logger.error("Processing {} failed.", message, ex);
+
 			sendErrorMessage(message.getRetourNo(), ex);
 		}
 

@@ -3,7 +3,7 @@ package com.github.cbuschka.retour.domain.order_store;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.github.codestickers.Used;
 
-public class RetourCreatedEvent extends OrderEvent
+public class RetourReceivedEvent extends OrderEvent
 {
 	@JsonProperty
 	private String retourNo;
@@ -12,20 +12,21 @@ public class RetourCreatedEvent extends OrderEvent
 	private String processedAt;
 
 	@Used("Required by jackson.")
-	public RetourCreatedEvent()
+	public RetourReceivedEvent()
 	{
 	}
+
+	public RetourReceivedEvent(String retourNo, String processedAt)
+	{
+		this.retourNo = retourNo;
+		this.processedAt = processedAt;
+	}
+
 
 	@Override
 	public String getType()
 	{
-		return "RetourCreated";
-	}
-
-	public RetourCreatedEvent(String retourNo, String processedAt)
-	{
-		this.processedAt = processedAt;
-		this.retourNo = retourNo;
+		return "RetourReceived";
 	}
 
 	public String getRetourNo()

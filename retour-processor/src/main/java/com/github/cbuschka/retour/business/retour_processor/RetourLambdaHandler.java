@@ -12,7 +12,7 @@ public class RetourLambdaHandler implements RequestStreamHandler
 {
 	private RetourProcessor retourProcessor = new RetourProcessor();
 
-	private SqsAwareLambdaHandlerAdapter<RetourMessage> sqsAwareLambdaHandlerAdapter = new SqsAwareLambdaHandlerAdapter<>(RetourMessage.class);
+	private SqsAwareLambdaHandlerAdapter<ReceiveRetourCommand> sqsAwareLambdaHandlerAdapter = new SqsAwareLambdaHandlerAdapter<>(ReceiveRetourCommand.class);
 
 	public void handleRequest(InputStream input, OutputStream output, Context context) throws IOException
 	{

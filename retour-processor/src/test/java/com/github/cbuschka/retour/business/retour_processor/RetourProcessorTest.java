@@ -4,7 +4,8 @@ import com.github.cbuschka.retour.domain.charge_seller.ChargeSellerService;
 import com.github.cbuschka.retour.domain.order_store.Order;
 import com.github.cbuschka.retour.domain.order_store.OrderNotFound;
 import com.github.cbuschka.retour.domain.order_store.OrderRepository;
-import com.github.cbuschka.retour.domain.order_store.RetourAlreadyProcessed;
+import com.github.cbuschka.retour.domain.order_store.RetourAlreadyReceived;
+import com.github.cbuschka.retour.domain.order_store.RetourNotKnown;
 import com.github.cbuschka.retour.domain.refund_buyer.RefundBuyerService;
 import com.github.cbuschka.retour.infrastructure.persistence.AggregateRoot;
 import org.junit.Rule;
@@ -13,8 +14,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
-
-import java.util.Optional;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
@@ -37,7 +36,7 @@ public class RetourProcessorTest
 	@Mock
 	private Order order;
 	@Mock
-	private RetourMessage retourMessage;
+	private ReceiveRetourCommand receiveRetourCommand;
 	@Mock
 	private RefundBuyerService refundBuyerService;
 	@InjectMocks
@@ -52,14 +51,14 @@ public class RetourProcessorTest
 	private OrderRepository orderRepository;
 
 	@Test
-	public void chargesSeller() throws RetourAlreadyProcessed, OrderNotFound
+	public void chargesSeller() throws RetourAlreadyReceived, OrderNotFound, RetourNotKnown
 	{
 		givenIsAnValidRetourMessage();
 		givenIsACorrespondingOrder();
 
 		whenHandlerInvoked();
 
-		thenRetourRecordIsCreated();
+		thenRetourRecordIReceived();
 		thenSellerIsCharged();
 		thenBuyerIsRefunded();
 		thenNoErrorIsSent();
@@ -72,9 +71,9 @@ public class RetourProcessorTest
 		when(this.orderAggregateRoot.getData()).thenReturn(this.order);
 	}
 
-	private void thenRetourRecordIsCreated() throws RetourAlreadyProcessed
+	private void thenRetourRecordIReceived() throws RetourAlreadyReceived, RetourNotKnown
 	{
-		verify(this.order).createRetour(RETOUR_NO);
+		verify(this.order).receiveRetour(RETOUR_NO);
 	}
 
 	@Test
@@ -145,7 +144,7 @@ public class RetourProcessorTest
 
 	private void whenHandlerInvoked()
 	{
-		this.retourProcessor.processRetour(retourMessage);
+		this.retourProcessor.processRetour(receiveRetourCommand);
 	}
 
 	private void thenSellerIsCharged()
@@ -155,8 +154,8 @@ public class RetourProcessorTest
 
 	private void givenIsAnValidRetourMessage()
 	{
-		when(retourMessage.getRetourNo()).thenReturn(RETOUR_NO);
-		when(retourMessage.getOrderNo()).thenReturn(ORDER_NO);
+		when(receiveRetourCommand.getRetourNo()).thenReturn(RETOUR_NO);
+		when(receiveRetourCommand.getOrderNo()).thenReturn(ORDER_NO);
 	}
 
 	private void thenAckIsSent()
@@ -166,8 +165,8 @@ public class RetourProcessorTest
 
 	private void givenIsAnInvalidRetourMessage() throws RetourMessageInvalid
 	{
-		doThrow(new RetourMessageInvalid(RETOUR_NO)).when(this.retourValidator).validate(retourMessage);
-		when(retourMessage.getRetourNo()).thenReturn(RETOUR_NO);
+		doThrow(new RetourMessageInvalid(RETOUR_NO)).when(this.retourValidator).validate(receiveRetourCommand);
+		when(receiveRetourCommand.getRetourNo()).thenReturn(RETOUR_NO);
 	}
 
 	private void thenBuyerIsRefunded()

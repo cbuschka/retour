@@ -5,7 +5,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
 
 public class OrderTest
 {
@@ -14,23 +14,66 @@ public class OrderTest
 
 	private static final String RETOUR_NO = "R1";
 
-	private Order order = new Order();
+	private Order order;
 
 	@Test
-	public void detectsDupRetours() throws RetourAlreadyProcessed
+	public void detectsDupCreatedRetours() throws RetourAlreadyExists
 	{
-		order.createRetour(RETOUR_NO);
+		givenIsAnOrderWithOpenRetour();
 
-		expectedException.expect(RetourAlreadyProcessed.class);
+		expectedException.expect(RetourAlreadyExists.class);
 		order.createRetour(RETOUR_NO);
 	}
 
 	@Test
-	public void processesRetours() throws RetourAlreadyProcessed
+	public void detectsUnknownRetours() throws RetourNotKnown, RetourAlreadyReceived
 	{
-		order.createRetour(RETOUR_NO);
+		givenIsAnOrderWithoutRetours();
 
-		assertThat(order.isRetourAlreadyProcessed(RETOUR_NO), is(true));
+		expectedException.expect(RetourNotKnown.class);
+		order.receiveRetour(RETOUR_NO);
 	}
 
+	@Test
+	public void detectsDupReceivedRetours() throws RetourNotKnown, RetourAlreadyReceived, RetourAlreadyExists
+	{
+		givenIsAnOrderWithReceivedRetour();
+
+		expectedException.expect(RetourAlreadyReceived.class);
+		order.receiveRetour(RETOUR_NO);
+	}
+
+	@Test
+	public void receiveRetour() throws RetourAlreadyReceived, RetourNotKnown, RetourAlreadyExists
+	{
+		givenIsAnOrderWithReceivedRetour();
+
+		assertThat(order.isRetourReceived(RETOUR_NO), is(true));
+	}
+
+	@Test
+	public void createRetour() throws RetourAlreadyExists
+	{
+		givenIsAnOrderWithOpenRetour();
+
+		assertThat(order.isRetourOpen(RETOUR_NO), is(true));
+	}
+
+	private void givenIsAnOrderWithOpenRetour() throws RetourAlreadyExists
+	{
+		this.order = new Order();
+		order.createRetour(RETOUR_NO);
+	}
+
+	private void givenIsAnOrderWithReceivedRetour() throws RetourAlreadyExists, RetourAlreadyReceived, RetourNotKnown
+	{
+		this.order = new Order();
+		order.createRetour(RETOUR_NO);
+		order.receiveRetour(RETOUR_NO);
+	}
+
+	private void givenIsAnOrderWithoutRetours()
+	{
+		this.order = new Order();
+	}
 }

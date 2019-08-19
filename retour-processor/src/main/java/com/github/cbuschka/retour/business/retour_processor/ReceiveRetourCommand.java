@@ -4,7 +4,7 @@ import com.github.codestickers.Used;
 
 import javax.validation.constraints.NotBlank;
 
-public class RetourMessage
+public class ReceiveRetourCommand
 {
 	@NotBlank
 	private String retourNo;
@@ -13,11 +13,11 @@ public class RetourMessage
 	private String orderNo;
 
 	@Used("required for deserialization")
-	public RetourMessage()
+	public ReceiveRetourCommand()
 	{
 	}
 
-	public RetourMessage(String retourNo, String orderNo)
+	public ReceiveRetourCommand(String retourNo, String orderNo)
 	{
 		this.retourNo = retourNo;
 		this.orderNo = orderNo;

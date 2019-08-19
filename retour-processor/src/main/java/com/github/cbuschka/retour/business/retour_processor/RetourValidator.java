@@ -10,19 +10,19 @@ import java.util.Set;
 public class RetourValidator {
 	private ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
 
-	public void validate(RetourMessage message) throws RetourMessageInvalid {
+	public void validate(ReceiveRetourCommand message) throws RetourMessageInvalid {
 
-		Set<ConstraintViolation<RetourMessage>> violations = getViolations(message);
+		Set<ConstraintViolation<ReceiveRetourCommand>> violations = getViolations(message);
 		if (!violations.isEmpty()) {
 			throw new RetourMessageInvalid(violations.toString());
 		}
 	}
 
-	private Set<ConstraintViolation<RetourMessage>> getViolations(RetourMessage message) {
+	private Set<ConstraintViolation<ReceiveRetourCommand>> getViolations(ReceiveRetourCommand message) {
 		Objects.requireNonNull(message, "Message is missing.");
 
 		Validator validator = factory.getValidator();
-		Set<ConstraintViolation<RetourMessage>> violations = validator.validate(message);
+		Set<ConstraintViolation<ReceiveRetourCommand>> violations = validator.validate(message);
 		return violations;
 	}
 }
