@@ -7,11 +7,12 @@ import com.github.cbuschka.retour.domain.order_store.OrderRepository;
 import com.github.cbuschka.retour.domain.order_store.RetourAlreadyProcessed;
 import com.github.cbuschka.retour.domain.refund_buyer.RefundBuyerService;
 import com.github.cbuschka.retour.infrastructure.persistence.AggregateRoot;
-import com.github.cbuschka.retour.util.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RetourProcessor
 {
-	private static Logger logger = Logger.get();
+	private static Logger logger = LoggerFactory.getLogger(RetourProcessor.class);
 
 	private RetourValidator retourValidator = new RetourValidator();
 
@@ -27,7 +28,7 @@ public class RetourProcessor
 
 	public void processRetour(RetourMessage message)
 	{
-		logger.log("Processing " + message + "...");
+		logger.info("Processing " + message + "...");
 
 		try
 		{
@@ -50,12 +51,12 @@ public class RetourProcessor
 			sendErrorMessage(message.getRetourNo(), ex);
 		}
 
-		logger.log(message + " processed.");
+		logger.info(message + " processed.");
 	}
 
 	private void sendErrorMessage(String retourNo, Exception ex)
 	{
-		logger.log(ex.getMessage());
+		logger.info(ex.getMessage(), ex);
 		retourErrorSender.sendError(retourNo, ex);
 	}
 }

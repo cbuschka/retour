@@ -1,13 +1,13 @@
 package com.github.cbuschka.retour.domain.refund_buyer;
 
 import com.github.cbuschka.retour.infrastructure.sqs.SqsJsonMessageSender;
-import com.github.cbuschka.retour.util.Logger;
 import com.github.codestickers.VisibleForTesting;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RefundBuyerService
 {
-
-	private static Logger logger = Logger.get();
+	private static Logger logger = LoggerFactory.getLogger(RefundBuyerService.class);
 
 	@VisibleForTesting
 	static final String QUEUE_NAME = "refund_buyer.fifo";
@@ -20,6 +20,6 @@ public class RefundBuyerService
 
 		String messageId = sqsJsonMessageSender.send(QUEUE_NAME, message, retourNo);
 
-		logger.log("Refund buyer message messageId=" + messageId + " sent.");
+		logger.info("Refund buyer message messageId=" + messageId + " sent.");
 	}
 }

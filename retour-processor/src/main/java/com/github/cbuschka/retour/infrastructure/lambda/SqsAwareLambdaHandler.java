@@ -12,7 +12,8 @@ public abstract class SqsAwareLambdaHandler<T> implements RequestHandler<SqsEnve
 
 	private Class<T> inputType;
 
-	protected SqsAwareLambdaHandler(Class<T> inputType) {
+	protected SqsAwareLambdaHandler(Class<T> inputType)
+	{
 		this.inputType = inputType;
 	}
 
@@ -25,9 +26,7 @@ public abstract class SqsAwareLambdaHandler<T> implements RequestHandler<SqsEnve
 
 		SqsEnvelope.Record firstRecord = envelope.Records.get(0);
 		T event = extractMessage(firstRecord);
-		ThreadLocalContext.runWith(() -> {
-			handle(event, context);
-		}, context);
+		handle(event, context);
 
 		return null;
 	}
