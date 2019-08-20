@@ -26,7 +26,6 @@ import static org.mockito.Mockito.when;
 
 public class SqsJsonMessageSenderTest
 {
-
 	private static final String MESSAGE_AS_JSON = "json";
 	private static final String A_QUEUE_URL = "queueUrl";
 	private static final String QUEUE_NAME = "queueName";

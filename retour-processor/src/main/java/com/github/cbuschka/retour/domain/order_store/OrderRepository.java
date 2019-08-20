@@ -2,7 +2,9 @@ package com.github.cbuschka.retour.domain.order_store;
 
 import com.github.cbuschka.retour.infrastructure.persistence.AggregateRoot;
 import com.github.cbuschka.retour.infrastructure.persistence.DynamodbAggregateStore;
+import org.springframework.stereotype.Component;
 
+@Component
 public class OrderRepository extends DynamodbAggregateStore<Order>
 {
 	private static final String TABLE_NAME = "Order";

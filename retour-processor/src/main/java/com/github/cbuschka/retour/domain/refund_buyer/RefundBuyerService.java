@@ -4,7 +4,10 @@ import com.github.cbuschka.retour.infrastructure.sqs.SqsJsonMessageSender;
 import com.github.codestickers.VisibleForTesting;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+@Component
 public class RefundBuyerService
 {
 	private static Logger logger = LoggerFactory.getLogger(RefundBuyerService.class);
@@ -12,7 +15,8 @@ public class RefundBuyerService
 	@VisibleForTesting
 	static final String QUEUE_NAME = "refund_buyer.fifo";
 
-	private SqsJsonMessageSender<RefundBuyerMessage> sqsJsonMessageSender = new SqsJsonMessageSender<>();
+	@Autowired
+	private SqsJsonMessageSender<RefundBuyerMessage> sqsJsonMessageSender;
 
 	public void refundBuyer(String retourNo)
 	{

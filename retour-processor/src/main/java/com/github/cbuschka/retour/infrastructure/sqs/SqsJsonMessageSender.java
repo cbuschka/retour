@@ -6,21 +6,23 @@ import com.amazonaws.services.sqs.model.GetQueueUrlResult;
 import com.amazonaws.services.sqs.model.SendMessageRequest;
 import com.amazonaws.services.sqs.model.SendMessageResult;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
+@Component
 public class SqsJsonMessageSender<T>
 {
-
-	private ObjectMapper objectMapper = new ObjectMapper();
-
 	private static final String DUMMY_MESSAGE_GROUP_ID = "default";
 
-	private AmazonSQS sqs = AmazonSQSClientBuilder.defaultClient();
+	@Autowired
+	private ObjectMapper objectMapper;
+	@Autowired
+	private AmazonSQS sqs;
 
 	public String send(String queueName, T message, String dedupId)
 	{
-
 		String json = convertToJson(message);
 
 		String queueUrl = locateQueue(queueName);

@@ -1,5 +1,7 @@
 package com.github.cbuschka.retour.business.retour_processor;
 
+import org.springframework.stereotype.Component;
+
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
@@ -7,6 +9,7 @@ import javax.validation.ValidatorFactory;
 import java.util.Objects;
 import java.util.Set;
 
+@Component
 public class RetourValidator {
 	private ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
 

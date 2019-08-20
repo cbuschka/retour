@@ -10,22 +10,26 @@ import com.github.cbuschka.retour.domain.refund_buyer.RefundBuyerService;
 import com.github.cbuschka.retour.infrastructure.persistence.AggregateRoot;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+@Component
 public class RetourProcessor
 {
 	private static Logger logger = LoggerFactory.getLogger(RetourProcessor.class);
 
-	private RetourValidator retourValidator = new RetourValidator();
-
-	private ChargeSellerService chargeSellerService = new ChargeSellerService();
-
-	private RefundBuyerService refundBuyerService = new RefundBuyerService();
-
-	private RetourErrorSender retourErrorSender = new RetourErrorSender();
-
-	private RetourAckSender retourAckSender = new RetourAckSender();
-
-	private OrderRepository orderRepository = new OrderRepository();
+	@Autowired
+	private RetourValidator retourValidator;
+	@Autowired
+	private ChargeSellerService chargeSellerService;
+	@Autowired
+	private RefundBuyerService refundBuyerService;
+	@Autowired
+	private RetourErrorSender retourErrorSender;
+	@Autowired
+	private RetourAckSender retourAckSender;
+	@Autowired
+	private OrderRepository orderRepository;
 
 	public void processRetour(ReceiveRetourCommand message)
 	{

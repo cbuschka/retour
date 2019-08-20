@@ -1,11 +1,17 @@
 package com.github.cbuschka.retour.domain.order_store;
 
+import com.github.cbuschka.retour.RetourProcessorConfig;
 import com.github.cbuschka.retour.infrastructure.persistence.AggregateRoot;
 import com.github.cbuschka.retour.infrastructure.persistence.ConcurrentModification;
+import com.github.cbuschka.retour.infrastructure.spring.ApplicationContextFactory;
 import com.github.cbuschka.retour.util.Dates;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import java.util.Optional;
 
@@ -22,7 +28,23 @@ public class OrderRepositoryIntegrationTest
 	@Rule
 	public ExpectedException expectedException = ExpectedException.none();
 
-	private OrderRepository orderRepository = new OrderRepository();
+	@Autowired
+	private OrderRepository orderRepository;
+
+	private AnnotationConfigApplicationContext applicationContext;
+
+	@Before
+	public void before()
+	{
+		this.applicationContext = ApplicationContextFactory.newApplicationContext(RetourProcessorConfig.class);
+		this.applicationContext.getAutowireCapableBeanFactory().autowireBean(this);
+	}
+
+	@After
+	public void after()
+	{
+		this.applicationContext.close();
+	}
 
 	@Test
 	public void doesNotFindNonExistentOrder()
