@@ -5,6 +5,7 @@ import com.amazonaws.services.lambda.runtime.RequestStreamHandler;
 import com.github.cbuschka.retour.AwsConfig;
 import com.github.cbuschka.retour.RetourProcessorConfig;
 import com.github.cbuschka.retour.infrastructure.lambda.SqsAwareLambdaHandlerAdapter;
+import com.github.cbuschka.retour.infrastructure.lambda.UniversalLambdaHandlerAdapter;
 import com.github.cbuschka.retour.infrastructure.spring.ApplicationContextFactory;
 import com.github.codestickers.Used;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +22,8 @@ public class RetourLambdaHandler implements RequestStreamHandler
 	@Autowired
 	private RetourProcessor retourProcessor;
 
-	private SqsAwareLambdaHandlerAdapter<ReceiveRetourCommand> sqsAwareLambdaHandlerAdapter = new SqsAwareLambdaHandlerAdapter<>(ReceiveRetourCommand.class);
+	@Autowired
+	private UniversalLambdaHandlerAdapter lambdaHandlerAdapter;
 
 	@Used("Required for aws.")
 	public RetourLambdaHandler()
@@ -37,7 +39,7 @@ public class RetourLambdaHandler implements RequestStreamHandler
 
 	public void handleRequest(InputStream input, OutputStream output, Context context) throws IOException
 	{
-		this.sqsAwareLambdaHandlerAdapter.handleRequest(input, output, context,
+		this.lambdaHandlerAdapter.handleRequest(input, ReceiveRetourCommand.class, output, context,
 				(m, c) -> this.retourProcessor.processRetour(m));
 	}
 
